@@ -1,0 +1,10 @@
+read x;
+x := 0;
+while x < 10 do x := x + 1;
+y := 9;
+if x >= y then z := 1 else z := 3;;;
+write z;
+skip;
+skip; p := skip;
+skip; skip;
+w = p;
