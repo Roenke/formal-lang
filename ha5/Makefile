@@ -18,7 +18,7 @@ all: bin gen
 	$(CXX) $(CXXFLAGS) $(LEXER_GEN) $(PARSER_GEN) -o $(TARGET)
 
 gen: $(LEXER_LEX) $(PARSER_SRC)
-	$(BISON) -o $(PARSER_GEN) -d $(PARSER_SRC)
+	$(BISON) -o $(PARSER_GEN) -d -v $(PARSER_SRC)
 	$(LEX) -o $(LEXER_GEN) $(LEXER_LEX)
 
 bin:
@@ -29,4 +29,4 @@ clean:
 	rm $(TARGET)
 
 tests: all
-	cat tests/1.test && $(TARGET) < tests/1.test
+	cat tests/1.test && $(TARGET) tests/1.test

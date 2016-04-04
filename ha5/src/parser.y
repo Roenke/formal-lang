@@ -1,10 +1,20 @@
 %{
 #include <iostream>
 #include <string>
+#include <cstdint>
 #include "parser.hpp"
+#include <fstream>
 
+extern uint64_t position;
+extern uint64_t line_num;
 extern int yyparse(void);
-extern int yylex(void);  
+extern int yylex(void);
+
+extern FILE* yyin;
+void usage(const char* filename) {
+	std::cerr << "Usage: " << std::endl << "\t" << filename 
+	<< " <input-file>" << std::endl;
+}
 
 // Set new yyin and return 0, or 
 // return 1, and complete all input.
@@ -14,12 +24,23 @@ int yywrap()
 }
 
 void yyerror(const char *s) {
-	std::cout << "Parse error!  Message: " << s << std::endl;
+	std::cerr << "Parse error! " << 
+	"Message: " << s << std::endl;
 }
 
-main()
+main(int argc, char* argv[])
 {
-	std::cout << "Start parsing." <<std::endl;
+	if (argc != 2) {
+		usage(argv[0]);
+		return 1;
+	}
+
+	yyin = fopen(argv[1], "r");
+	if(yyin == NULL) {
+		std::cerr << "Cannot open input file. Try again." << std::endl;
+		usage;
+	}
+
 	yyparse();
 } 
 %}
@@ -36,23 +57,63 @@ program:
 	}
 	;
 
+expr_term:
+	VARIABLE
+	{
+		std::cout << "var" << std::endl;
+	}
+	|
+	NUMBER
+	{
+		std::cout << "num" << std::endl;
+	}
+	;
+
 expr:
-	  VARIABLE
-	| NUMBER
-	| expr OPERATION expr
+	expr_term
+	|
+	expr OPERATION expr_term
 	{
 		std::cout << "expr" << std::endl;
 	}
 	;
 
 statement:
-	  SKIP 
-	| VARIABLE ASSIGN expr 
-	| statement SEMICOLON statement
-	| WRITE expr
-	| READ expr
-	| WHILE expr DO expr
-	| IF expr THEN expr ELSE expr 
+	statement_term
+	|
+	statement SEMICOLON statement_term
+	{
+		std::cout << "few statement" << std::endl;
+	}
+	;
+
+statement_term:
+	SKIP 
+	{
+		std::cout << "skip" << std::endl;
+	}
+	|
+	VARIABLE ASSIGN expr
+	{
+		std::cout << "assign" << std::endl;
+	}
+	|
+	WRITE expr
+	{
+		std::cout << "write" << std::endl;
+	}
+	|
+	READ expr
+	{
+		std::cout << "read" << std::endl;
+	}
+	|
+	WHILE expr DO statement_term
+	{
+		std::cout << "while-cycle" << std::endl;
+	}
+	|
+	IF expr THEN statement ELSE statement 
 	{
 		std::cout << "statement" << std::endl;
 	}

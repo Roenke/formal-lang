@@ -2,8 +2,11 @@
 #include <string.h>
 #include <cstdint>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include "parser.hpp"
+
+std::ofstream lexer_log("lexer.log");
 
 uint64_t position = 1;
 uint64_t line_num = 1;
@@ -42,31 +45,35 @@ UNKNOWN   .
 {KEY_WORD} {
 	log_token("kw");
 	position += strlen(yytext);
-	std::cout << "return " << kw_types[yytext] << std::endl;
+	std::cout << kw_types[yytext] << std::endl;
 	return kw_types[yytext];
 }
 
 {OPERATION} {
 	log_token("op");
 	position += strlen(yytext);
+	std::cout << OPERATION << std::endl;
 	return OPERATION;
 }
 
 {VARIABLE} {
 	log_token("var");
 	position += strlen(yytext);
+	std::cout << VARIABLE << std::endl;
 	return VARIABLE;
 }
 
 {NUMBER} {
 	log_token("num");
 	position += strlen(yytext);
+	std::cout << NUMBER << std::endl;
 	return NUMBER;
 }
 
 {ASSIGN} {
 	log_token("assign");
 	position += strlen(yytext);
+	std::cout << ASSIGN << std::endl;
 	return ASSIGN;
 }
 
@@ -86,6 +93,7 @@ UNKNOWN   .
 {SEMICOLON}  {
 	log_semicolon();
 	++position;
+	std::cout << SEMICOLON << std::endl;
 	return SEMICOLON;
 }
 
@@ -97,17 +105,17 @@ UNKNOWN   .
 %%
 
 void log_position() {
-	std::cout << "(line = " << line_num << ", pos = " << position << ")";
+	lexer_log << "(line = " << line_num << ", pos = " << position << ")";
 }
 
 void log_semicolon() {
-	std::cout << "semicolon" << "\t";
+	lexer_log << "semicolon" << "\t";
 	log_position();
-	std::cout << std::endl;
+	lexer_log << std::endl;
 }
 
 void log_token(const char * type) {
-	std::cout << type << "\t" << yytext << "\t";
+	lexer_log << type << "\t" << yytext << "\t";
 	log_position();
-	std::cout << std::endl;
+	lexer_log << std::endl;
 }
