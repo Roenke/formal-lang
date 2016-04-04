@@ -15,10 +15,11 @@ TARGET = ./parser
 CXXFLAGS = -std=c++11
 
 all: bin gen
-	$(CXX) $(CXXFLAGS) $(LEXER_GEN) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(LEXER_GEN) $(PARSER_GEN) -o $(TARGET)
 
-gen: $(LEXER_LEX)
-	$(LEX) -o $(LEXER_GEN) $(LEXER_LEX) 
+gen: $(LEXER_LEX) $(PARSER_SRC)
+	$(BISON) -o $(PARSER_GEN) -d $(PARSER_SRC)
+	$(LEX) -o $(LEXER_GEN) $(LEXER_LEX)
 
 bin:
 	mkdir -p bin
@@ -28,5 +29,4 @@ clean:
 	rm $(TARGET)
 
 tests: all
-	cat tests/1.test && ./lexer < tests/1.test
-	cat tests/2.test && ./lexer < tests/2.test
+	cat tests/1.test && $(TARGET) < tests/1.test
