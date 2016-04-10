@@ -113,7 +113,7 @@ statement_term:
 		std::cout << "while-cycle" << std::endl;
 	}
 	|
-	IF expr THEN statement ELSE statement 
+	IF expr THEN statement ELSE statement_term 
 	{
 		std::cout << "statement" << std::endl;
 	}
