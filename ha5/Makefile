@@ -18,6 +18,7 @@ CXXFLAGS = -std=c++11
 
 all: bin gen
 	$(CXX) $(CXXFLAGS) $(LEXER_GEN) $(PARSER_GEN) $(MAIN) -o $(TARGET)
+	
 
 gen: $(LEXER_LEX) $(PARSER_SRC)
 	$(BISON) -o $(PARSER_GEN) -d -v $(PARSER_SRC)
@@ -30,6 +31,13 @@ clean:
 	rm -r $(BIN)*
 	rm $(TARGET)
 	rm lexer.log
+	rm tree.png
+	rm tree.dot
+
+memcheck: all
+	valgrind --tool=memcheck --leak-check=full $(TARGET) tests/1.test
 
 tests: all
-	cat tests/1.test && $(TARGET) tests/1.test
+	cat tests/1.test && $(TARGET) tests/1.test && \
+	dot -Tpng  -Gdpi=1500 -o tree.png tree.dot && \
+	xdg-open tree.png

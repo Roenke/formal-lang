@@ -13,6 +13,7 @@ std::ofstream lexer_log("lexer.log");
 
 size_t position = 1;
 size_t line_num = 1;
+
 const uint32_t TAB_SIZE = 4;
 std::map<std::string, yytokentype> kw_types{
 	{ "skip", SKIP },
@@ -41,6 +42,8 @@ ASSIGN    :=
 SPACE     [ ]
 NEW_LINE  \n
 TAB       \t
+LPAREN    \(
+RPAREN    \)
 SEMICOLON ;
 UNKNOWN   .
 
@@ -92,6 +95,14 @@ UNKNOWN   .
 
 {TAB} { 
 	position += TAB_SIZE; 
+}
+
+{LPAREN} {
+	return LPAREN;
+}
+
+{RPAREN} {
+	return RPAREN;
 }
 
 {SEMICOLON}  {

@@ -1,10 +1,10 @@
 read x;
 x := 0;
-while x < 10 do x := x + 1;
+while (x < 10) do x := x + 1;
 y := 9;
-if x >= y then z := 1 + 2 else z := 3 - 4;
+if (x >= y) then z := 1 + 2 else z := 3 - 4;
 write z;
 skip;
-skip; p := 1 + 5 * 3;
+skip; p := (1 + (5 * 3));
 skip; skip;
 w := p

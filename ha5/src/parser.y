@@ -21,9 +21,10 @@ int yywrap()
     return 1;
 }
 
-void yyerror(const char *s) {
+void yyerror(const char* message) {
 	std::cerr << "Parse error! " << 
-	"Message: " << s << std::endl;
+	"Message: " << message << std::endl;
+	std::cerr << "line = " << line_num << ", pos = " << position << std::endl;
 }
 
 %}
@@ -46,6 +47,8 @@ void yyerror(const char *s) {
 %token <str> SEMICOLON
 %token <str> OPERATION
 %token <str> SKIP
+%token LPAREN
+%token RPAREN
 
 %type <node> program
 %type <node> statement
@@ -85,6 +88,14 @@ expr:
 		static size_t local_num = 1;
 		$$ = new tree_node(std::string("expr_term") + std::to_string(local_num++));
 		$$->add_child($1);
+	}
+	|
+	LPAREN expr OPERATION expr RPAREN
+	{
+		$$ = new tree_node("(expr " + std::string($3) + " expr)");
+		$$->add_child($2);
+		$$->add_child($4);
+		delete[] $3;
 	}
 	|
 	expr OPERATION expr_term

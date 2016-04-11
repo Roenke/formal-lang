@@ -3,27 +3,19 @@
 extern int yyparse(void);
 extern FILE* yyin;
 std::unique_ptr<tree_node> root;
+
+const char* AST_FILENAME = "tree.dot";
+char const * AST_FILE_HEADER =
+        "digraph AST {\n"
+        "\trankdir=TB;\n"
+        "size=\"6,5\"\n"
+        "node [shape = circle];\n";
+char const * AST_FILE_FOOTER = "}\n";
+
 void usage(const char* filename) {
     std::cerr << "Usage: " << std::endl << "\t" << filename 
     << " <input-file>" << std::endl;
 }
-
-void add_header(std::ostream& os){
-    char const * header =
-        "digraph AST {\n"
-        "rankdir=TB;\n"
-        "rotate=90\n"
-        "size=\"8,5\"\n"
-        "node [shape = circle];\n\n";
-
-    os << header;
-}
-
-void add_footer(std::ostream& os) {
-    char const * footer = "}\n";
-
-    os << footer;
-} 
 
 int main(int argc, char* argv[])
 {
@@ -40,8 +32,8 @@ int main(int argc, char* argv[])
 
     yyparse();
 
-    std::ofstream asf_file("ast.dot");
-    add_header(asf_file);
-    root->serialize(asf_file);
-    add_footer(asf_file);
+    std::ofstream tree_file(AST_FILENAME);
+    tree_file << AST_FILE_HEADER;
+    root->serialize(tree_file);
+    tree_file << AST_FILE_FOOTER;
 } 
