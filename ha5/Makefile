@@ -11,11 +11,13 @@ LEXER_LEX = $(SRC)lexer.lex
 PARSER_SRC = $(SRC)parser.y
 PARSER_GEN = $(BIN)parser.cpp
 
+MAIN = $(SRC)main.cpp
+
 TARGET = ./parser
 CXXFLAGS = -std=c++11
 
 all: bin gen
-	$(CXX) $(CXXFLAGS) $(LEXER_GEN) $(PARSER_GEN) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(LEXER_GEN) $(PARSER_GEN) $(MAIN) -o $(TARGET)
 
 gen: $(LEXER_LEX) $(PARSER_SRC)
 	$(BISON) -o $(PARSER_GEN) -d -v $(PARSER_SRC)
@@ -27,6 +29,7 @@ bin:
 clean:
 	rm -r $(BIN)*
 	rm $(TARGET)
+	rm lexer.log
 
 tests: all
 	cat tests/1.test && $(TARGET) tests/1.test

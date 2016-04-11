@@ -1,20 +1,18 @@
 %{
 #include <iostream>
 #include <string>
+#include <memory>
 #include <cstdint>
 #include "parser.hpp"
 #include <fstream>
+#include "../src/tree.hpp"
 
-extern uint64_t position;
-extern uint64_t line_num;
-extern int yyparse(void);
+extern size_t position;
+extern size_t line_num;
+
 extern int yylex(void);
 
-extern FILE* yyin;
-void usage(const char* filename) {
-	std::cerr << "Usage: " << std::endl << "\t" << filename 
-	<< " <input-file>" << std::endl;
-}
+extern std::unique_ptr<tree_node> root;
 
 // Set new yyin and return 0, or 
 // return 1, and complete all input.
@@ -28,94 +26,137 @@ void yyerror(const char *s) {
 	"Message: " << s << std::endl;
 }
 
-main(int argc, char* argv[])
-{
-	if (argc != 2) {
-		usage(argv[0]);
-		return 1;
-	}
-
-	yyin = fopen(argv[1], "r");
-	if(yyin == NULL) {
-		std::cerr << "Cannot open input file. Try again." << std::endl;
-		usage;
-	}
-
-	yyparse();
-} 
 %}
 
-%token SKIP DO WHILE WRITE READ IF THEN ELSE
-%token VARIABLE NUMBER ASSIGN SEMICOLON
-%token OPERATION
-%%
+%union{
+    const char* str;
+    struct tree_node* node;
+}
 
+%token <str> DO
+%token <str> WHILE
+%token <str> WRITE
+%token <str> READ
+%token <str> IF
+%token <str> THEN
+%token <str> ELSE
+%token <str> VARIABLE 
+%token <str> NUMBER
+%token <str> ASSIGN
+%token <str> SEMICOLON
+%token <str> OPERATION
+%token <str> SKIP
+
+%type <node> program
+%type <node> statement
+%type <node> expr_term
+%type <node> expr
+%type <node> statement_term
+
+%start program
+
+%%
+// TODO: Add delete for lexer buffer;
 program:
 	statement
 	{
-		std::cout << "program" << std::endl;
+		$$ = $1;
+		root.reset($$);
 	}
 	;
 
 expr_term:
 	VARIABLE
 	{
-		std::cout << "var" << std::endl;
+		$$ = new tree_node(std::string($1));
+		delete[] $1;
 	}
 	|
 	NUMBER
 	{
-		std::cout << "num" << std::endl;
+		$$ = new tree_node(std::string($1));
+		delete[] $1;
 	}
 	;
 
 expr:
 	expr_term
+	{
+		static size_t local_num = 1;
+		$$ = new tree_node(std::string("expr_term") + std::to_string(local_num++));
+		$$->add_child($1);
+	}
 	|
 	expr OPERATION expr_term
 	{
-		std::cout << "expr" << std::endl;
+		$$ = new tree_node("expr " + std::string($2));
+		$$->add_child($1);
+		$$->add_child($3);
+		delete[] $2;
 	}
 	;
 
 statement:
 	statement_term
+	{
+		static size_t local_num = 1;
+		$$ = new tree_node(std::string("statement") + std::to_string(local_num++));
+		$$->add_child($1);
+	}
 	|
 	statement SEMICOLON statement_term
 	{
-		std::cout << "few statement" << std::endl;
+		$$ = new tree_node(std::string($2));
+		$$->add_child($1);
+		$$->add_child($3);
+		delete[] $2;
 	}
 	;
 
 statement_term:
 	SKIP 
 	{
-		std::cout << "skip" << std::endl;
+		$$ = new tree_node(std::string($1));
+		delete[] $1;
 	}
 	|
 	VARIABLE ASSIGN expr
 	{
-		std::cout << "assign" << std::endl;
+		$$ = new tree_node(std::string($1) + $2);
+		$$->add_child($3);
+		delete[] $1; delete[] $2;
 	}
 	|
 	WRITE expr
 	{
-		std::cout << "write" << std::endl;
+		$$ = new tree_node(std::string($1));
+		$$->add_child($2);
+		delete[] $1;
 	}
 	|
 	READ expr
 	{
-		std::cout << "read" << std::endl;
+		$$ = new tree_node(std::string($1));
+		$$->add_child($2);
+		delete[] $1;
 	}
 	|
 	WHILE expr DO statement_term
 	{
-		std::cout << "while-cycle" << std::endl;
+		$$ = new tree_node(std::string($1) + " expr " + $3 + " statement_term ");
+		$$->add_child($2);
+		$$->add_child($4);
+		delete[] $1;
+		delete[] $3;
 	}
 	|
 	IF expr THEN statement ELSE statement_term 
 	{
-		std::cout << "statement" << std::endl;
+		$$ = new tree_node(std::string($1) + "expr" + $3 + " statement " + $5 + " statement_term");
+		$$->add_child($2);
+		$$->add_child($4);
+		$$->add_child($6);
+		delete[] $1; delete[] $3; delete[] $5;
 	}
 	;
 %%

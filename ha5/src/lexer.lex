@@ -3,13 +3,16 @@
 #include <cstdint>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include "parser.hpp"
 
+const size_t BUFFER_SIZE = 1024;
+
 std::ofstream lexer_log("lexer.log");
 
-uint64_t position = 1;
-uint64_t line_num = 1;
+size_t position = 1;
+size_t line_num = 1;
 const uint32_t TAB_SIZE = 4;
 std::map<std::string, yytokentype> kw_types{
 	{ "skip", SKIP },
@@ -22,6 +25,7 @@ std::map<std::string, yytokentype> kw_types{
 	{ "else", ELSE }
 };
 
+const char* describe_token();
 void log_semicolon();
 void log_token(char const * token_type);
 
@@ -45,35 +49,35 @@ UNKNOWN   .
 {KEY_WORD} {
 	log_token("kw");
 	position += strlen(yytext);
-	std::cout << kw_types[yytext] << std::endl;
+	yylval.str = describe_token();
 	return kw_types[yytext];
 }
 
 {OPERATION} {
 	log_token("op");
 	position += strlen(yytext);
-	std::cout << OPERATION << std::endl;
+	yylval.str = describe_token();
 	return OPERATION;
 }
 
 {VARIABLE} {
 	log_token("var");
 	position += strlen(yytext);
-	std::cout << VARIABLE << std::endl;
+	yylval.str = describe_token();
 	return VARIABLE;
 }
 
 {NUMBER} {
 	log_token("num");
 	position += strlen(yytext);
-	std::cout << NUMBER << std::endl;
+	yylval.str = describe_token();
 	return NUMBER;
 }
 
 {ASSIGN} {
 	log_token("assign");
 	position += strlen(yytext);
-	std::cout << ASSIGN << std::endl;
+	yylval.str = describe_token();
 	return ASSIGN;
 }
 
@@ -93,7 +97,7 @@ UNKNOWN   .
 {SEMICOLON}  {
 	log_semicolon();
 	++position;
-	std::cout << SEMICOLON << std::endl;
+	yylval.str = describe_token();
 	return SEMICOLON;
 }
 
@@ -104,18 +108,24 @@ UNKNOWN   .
 
 %%
 
+const char* describe_token() {
+	char* buf = new char[BUFFER_SIZE];
+	sprintf(buf, "%s(%zd : %zd)", yytext, line_num, position);
+	return buf;
+}
+
 void log_position() {
 	lexer_log << "(line = " << line_num << ", pos = " << position << ")";
 }
 
 void log_semicolon() {
-	lexer_log << "semicolon" << "\t";
+	lexer_log << "semicolon" << "\t\t";
 	log_position();
 	lexer_log << std::endl;
 }
 
 void log_token(const char * type) {
-	lexer_log << type << "\t" << yytext << "\t";
+	lexer_log << type << "\t\t" << yytext << "\t\t";
 	log_position();
 	lexer_log << std::endl;
 }
