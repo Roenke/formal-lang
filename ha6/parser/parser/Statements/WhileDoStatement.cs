@@ -7,6 +7,7 @@ namespace parser.Statements
     {
         public WhileDoStatement(SrcLoc location = null) : base(location)
         {
+
         }
 
         public WhileDoStatement(Term location, Term term) : base(SrcLoc.EndOfSource)

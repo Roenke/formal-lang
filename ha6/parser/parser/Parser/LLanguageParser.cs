@@ -110,18 +110,29 @@ namespace parser.Parser
             Func<string, Parser<Func<T, T, T>>> resOp = 
                     name => from op in lexer.ReservedOp(name) select binop(op);
 
-            var equals = new Infix<T>("==", resOp("=="), Assoc.Left);
+            var assign = new Infix<T>(":=", resOp(":="), Assoc.Left);
+            var eq = new Infix<T>("==", resOp("=="), Assoc.None);
+            var neq = new Infix<T>("!=", resOp("!="), Assoc.None);
+            var lt = new Infix<T>("<", resOp("<"), Assoc.None);
+            var le = new Infix<T>("<=", resOp("<="), Assoc.None);
+            var gt = new Infix<T>(">", resOp(">"), Assoc.None);
+            var ge = new Infix<T>(">=", resOp(">="), Assoc.None);
             var mult = new Infix<T>("*", resOp("*"), Assoc.Left);
             var divide = new Infix<T>("/", resOp("/"), Assoc.Left);
+            var module = new Infix<T>("%", resOp("%"), Assoc.Left);
+            var land = new Infix<T>("&&", resOp("&&"), Assoc.Left);
+            var lor = new Infix<T>("||", resOp("||"), Assoc.Left);
+
             var plus = new Infix<T>("+", resOp("+"), Assoc.Left);
             var minus = new Infix<T>("-", resOp("-"), Assoc.Left);
-            var lessThan = new Infix<T>("<", resOp("<"), Assoc.Left);
 
             var binops = new OperatorTable<T>();
-            binops.AddRow().Add(equals)
-                  .AddRow().Add(mult).Add(divide)
-                  .AddRow().Add(plus).Add(minus)
-                  .AddRow().Add(lessThan);
+            binops.AddRow().Add(assign)
+                .AddRow().Add(mult).Add(divide).Add(module)
+                .AddRow().Add(plus).Add(minus)
+                .AddRow().Add(eq).Add(neq).Add(lt).Add(le).Add(gt).Add(ge)
+                .AddRow().Add(land)
+                .AddRow().Add(lor);
 
             return binops;
         }
