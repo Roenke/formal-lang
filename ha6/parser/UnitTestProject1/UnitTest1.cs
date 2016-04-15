@@ -10,7 +10,7 @@ namespace Tests
         {
             var parser = new LLanguageParser();
             Assert.True(parser.GetTree("skip"));
-            Assert.False(parser.GetTree("unknown"));
+            Assert.False(parser.GetTree("unknown asds"));
             Assert.True(parser.GetTree("x := 1"));
             Assert.True(parser.GetTree("if 1 < 3 then x := 3 else skip"));
             Assert.True(parser.GetTree("skip ; skip"));

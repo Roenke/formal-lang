@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using Monad.Parsec;
 using Monad.Parsec.Expr;
 using Monad.Parsec.Token;
@@ -10,10 +11,28 @@ namespace parser.Parser
 {
     public class LLanguageParser
     {
+        // Terminal statements
+        private static Parser<Term> _skip;
+        private static Parser<Term> _read;
+        private static Parser<Term> _write;
+        private static Parser<Term> _assign;
+        private static Parser<Term> _whileDo;
+        private static Parser<Term> _ifThenElse;
+
+        // Non-terminal statements
+        private static Parser<Term> _termStatement;
+        private static Parser<Term> _statement; 
+        private static Parser<Term> _semiStatement;
+
+        // Expressions
+        private static Parser<Term> _number;
+        private static Parser<Term> _variable;
+        private static Parser<Term> _expr; 
+
         public bool GetTree(string programToParse)
         {
             Parser<Term>[] exprlazy = {null};
-            var expr = Prim.Lazy(() => exprlazy[0]);
+            _expr = Prim.Lazy(() => exprlazy[0]);
             Func<Parser<Term>, Parser<ImmutableList<Term>>> many = Prim.Many;
             Func<Parser<Term>, Parser<Term>> @try = Prim.Try;
 
@@ -27,69 +46,72 @@ namespace parser.Parser
             var reserved = lexer.Reserved;
             var reservedOp = lexer.ReservedOp;
 
-            var number = from n in intLex
-                         select new Number(n) as Term;
-
-            var variable = from id in identifier
-                           select new Variable(id) as Term;
-
-            var read =
+            _read =
                 from r in reserved("read")
                 select new OperationIo() as Term;
 
-            var write =
+            _write =
                 from w in reserved("write")
                 select new OperationIo() as Term;
 
-            var subexpr = 
-                from p in parens(expr)
-                select new Expression() as Term;
+            _skip = from s in reserved("skip")
+                    select new SkipStatement() as Term;
 
-            var factor = from f in @try(number)
-                                 | @try(variable)
-                                 | subexpr
-                         select f;
-
-            var assign =
+            _assign =
                 from v in identifier
                 from op in reservedOp(":=")
-                from e in expr
+                from e in _expr
                 select new Assign(v, e) as Term;
 
-            var skipStatement = from s in reserved("skip")
-                select new SkipStatement() as Term;
-
-            var statement =
-                from st in read | write | skipStatement | assign
+            _whileDo =
+                from _ in reserved("while")
+                from e in _expr
+                from __ in reserved("do")
+                from s in _statement
                 select new Statement() as Term;
 
-            var whileDoStatement =
-                from _ in reserved("while")
-                from e in expr
-                from __ in reserved("do")
-                from s in statement
-                select new WhileDoStatement(e, s) as Term;
-
-            var ifThenElseStatement =
+            _ifThenElse =
                 from _ in reserved("if")
-                from e in expr
-                from t in reserved("then")
-                from st in statement
-                from el in reserved("else")
-                from se in statement
-                select new IfStatement(e as Expression, st as Statement, se as Statement) as Term;
+                from c in _expr
+                from then in reserved("then")
+                from st1 in _statement
+                from else_ in reserved("else")
+                from st2 in _statement
+                select new IfStatement(null, null, null) as Term;
 
-            var fewStatements = from lst in many(
-                from sc in reservedOp(";")
-                from st in statement | ifThenElseStatement | whileDoStatement
-                select new Statement() as Term
-                )
-                select new Statement(lst) as Term;
+            _termStatement =
+                from s in _skip | _assign | _read | _write | _whileDo | _ifThenElse
+                select new Statement() as Term;
+
+            _semiStatement =
+                from t in _termStatement
+                from _ in reservedOp(";")
+                from st in _semiStatement
+                select new Statement() as Term;
+
+            _statement =
+                from s in _semiStatement | _termStatement
+                select new Statement() as Term;
+
+            _number = from n in intLex
+                      select new Number(n) as Term;
+
+            _variable = from id in identifier
+                        select new Variable(id) as Term;
+
+            var subexpr = 
+                from p in parens(_expr)
+                select new Expression() as Term;
+
+            var factor = 
+                from f in @try(_number)
+                                   | @try(_variable)
+                                   | subexpr
+                select f;
 
             var program = 
-                from s1 in statement | ifThenElseStatement | whileDoStatement
-                from ts in fewStatements 
-                select new Program(ts as Statement) as Term;
+                from s in _statement
+                select new Program(s as Statement) as Term;
 
             exprlazy[0] = Ex.BuildExpressionParser(binops, factor);
 
