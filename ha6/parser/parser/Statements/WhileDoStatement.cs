@@ -1,29 +1,33 @@
 ﻿using System.Text;
 using Monad.Parsec;
-using parser.Parser;
+using parser.Expressions;
 
 namespace parser.Statements
 {
     public class WhileDoStatement : Statement
     {
-        public WhileDoStatement(SrcLoc location = null) : base(location)
+        public WhileDoStatement(Expression expr, Statement statement, SrcLoc location) : base(location)
         {
-
-        }
-
-        public WhileDoStatement(Term location, Term term) : base(SrcLoc.EndOfSource)
-        {
-            
+            _condition = expr;
+            _statement = statement;
         }
 
         public override void PrettyPrint(StringBuilder sb)
         {
-            throw new System.NotImplementedException();
+            sb.Append("while ");
+            _condition.Print(sb);
+            sb.AppendLine("do");
+            _statement.PrettyPrint(sb);
+            sb.AppendLine();
         }
 
         public override void Optimize()
         {
-            throw new System.NotImplementedException();
+            _condition.Simplify();
+            _statement.Optimize();
         }
+
+        private readonly Expression _condition;
+        private readonly Statement _statement;
     }
 }

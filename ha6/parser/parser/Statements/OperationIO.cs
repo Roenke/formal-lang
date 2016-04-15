@@ -9,20 +9,23 @@ namespace parser.Statements
     {
         private IoOperationType _opType;
 
-        public OperationIo(IoOperationType type, Expression e, SrcLoc location = null) : base(location)
+        public OperationIo(IoOperationType type, Expression e, SrcLoc location) : base(location)
         {
             _opType = type;
-
+            _rightExpression = e;
         }
 
         public override void PrettyPrint(StringBuilder sb)
         {
-            throw new System.NotImplementedException();
+            sb.Append(_opType == IoOperationType.Read ? "read " : "write ");
+            _rightExpression.Print(sb);
         }
 
         public override void Optimize()
         {
-            throw new System.NotImplementedException();
+            _rightExpression.Simplify();
         }
+
+        private readonly Expression _rightExpression;
     }
 }

@@ -67,7 +67,7 @@ namespace parser.Parser
                 from v in _variable
                 from op in reservedOp(":=")
                 from e in _expr
-                select new AssignStatement(v as Variable, e, v.Location) as Statement;
+                select new AssignStatement(v as Variable, e as Expression, v.Location) as Statement;
 
             _whileDo =
                 from _ in reserved("while")
@@ -77,13 +77,13 @@ namespace parser.Parser
                 select new WhileDoStatement(e, s) as Statement;
 
             _ifThenElse =
-                from _ in reserved("if")
+                from i in reserved("if")
                 from c in _expr
                 from then in reserved("then")
                 from st1 in _termStatement
                 from else_ in reserved("else")
                 from st2 in _termStatement
-                select new IfStatement(null, null, null) as Statement;
+                select new IfStatement(c as Expression, st1, st2, i.Location) as Statement;
 
             _termStatement =
                 from s in _skip | _assign | _read | _write | _whileDo | _ifThenElse

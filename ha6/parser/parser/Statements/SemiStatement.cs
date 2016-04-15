@@ -13,20 +13,20 @@ namespace parser.Statements
             _right = right;
         }
 
-        public Statement Left => _left;
-        public Statement Right => _right;
-
-        private Statement _left;
-        private Statement _right;
-
         public override void PrettyPrint(StringBuilder sb)
         {
-            throw new System.NotImplementedException();
+            _left.PrettyPrint(sb);
+            sb.AppendLine();
+            _right.PrettyPrint(sb);
         }
 
         public override void Optimize()
         {
-            throw new System.NotImplementedException();
+            _left.Optimize();
+            _right.Optimize();
         }
+
+        private readonly Statement _left;
+        private readonly Statement _right;
     }
 }

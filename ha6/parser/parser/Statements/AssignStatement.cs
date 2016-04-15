@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
 using parser.Expressions;
-using parser.Parser;
 
 namespace parser.Statements
 {
@@ -11,19 +10,25 @@ namespace parser.Statements
         {
         }
 
-        public AssignStatement(Variable leftVar, Term rightExpr, SrcLoc location) : base(location)
+        public AssignStatement(Variable leftVar, Expression rightExpr, SrcLoc location) : base(location)
         {
-            
+            _var = leftVar;
+            _rightExpression = rightExpr;
         }
 
         public override void PrettyPrint(StringBuilder sb)
         {
-            throw new System.NotImplementedException();
+            _var.Print(sb);
+            sb.Append(" := ");
+            _rightExpression.Print(sb);
         }
 
         public override void Optimize()
         {
-            throw new System.NotImplementedException();
+            _rightExpression.Simplify();
         }
+
+        private readonly Variable _var;
+        private readonly Expression _rightExpression;
     }
 }

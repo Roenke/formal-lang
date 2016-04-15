@@ -12,12 +12,12 @@ namespace parser.Statements
 
         public override void PrettyPrint(StringBuilder sb)
         {
-            throw new System.NotImplementedException();
+            sb.Append("skip");
         }
 
         public override void Optimize()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }
