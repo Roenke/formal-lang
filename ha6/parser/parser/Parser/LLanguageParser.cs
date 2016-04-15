@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Monad.Parsec;
 using Monad.Parsec.Expr;
 using Monad.Parsec.Token;
@@ -29,7 +30,7 @@ namespace parser.Parser
 
         private static Parser<Program> _program; 
 
-        public bool GetTree(string programToParse)
+        public Program GetTree(string programToParse)
         {
             Parser<Term>[] exprlazy = {null};
             _expr = Prim.Lazy(() => exprlazy[0]);
@@ -116,7 +117,12 @@ namespace parser.Parser
 
             var result = _program.Parse(programToParse);
 
-            return !result.IsFaulted;
+            if (!result.IsFaulted && result.Value.Length > 1)
+            {
+                throw new NotUniqueParseException("Result of parsing \"" + programToParse + "\" not unique");
+            }
+
+            return result.IsFaulted ? null : result.Value.First().Item1;
         }
 
         private static OperatorTable<T> BuildOperatorsTable<T>(GenTokenParser<T> lexer)

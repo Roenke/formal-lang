@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Expressions\Operation.cs" />
+    <Compile Include="Parser\NotUniqueParseException.cs" />
     <Compile Include="Statements\SemiStatement.cs" />
     <Compile Include="Statements\AssignStatement.cs" />
     <Compile Include="Expressions\BinaryOperation.cs" />
