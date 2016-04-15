@@ -1,4 +1,5 @@
-﻿using Monad.Parsec;
+﻿using System.Text;
+using Monad.Parsec;
 using parser.Statements;
 
 namespace parser.Parser
@@ -10,6 +11,13 @@ namespace parser.Parser
             _statement = statement;
         }
 
-        private Statement _statement;
+        private readonly Statement _statement;
+
+        public string PrettyPrint()
+        {
+            var sb = new StringBuilder();
+            _statement.PrettyPrint(sb);
+            return sb.ToString();
+        }
     }
 }

@@ -1,18 +1,19 @@
-﻿using Monad.Parsec;
-using Monad.Utility;
+﻿using System.Text;
+using Monad.Parsec;
 using parser.Parser;
 
 namespace parser.Statements
 {
-    public class Statement : Term
+    public abstract class Statement : Term
     {
-        private ImmutableList<Term> _terms;
-
-        public Statement(ImmutableList<Term> lst)
+        public Statement()
             : base(null)
         {
-            _terms = lst;
         }
+
+        public abstract void PrettyPrint(StringBuilder sb);
+
+        public abstract void Optimize();
 
         public Statement(SrcLoc location = null) : base(location)
         {

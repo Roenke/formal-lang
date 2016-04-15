@@ -1,12 +1,17 @@
-﻿using Monad.Parsec;
+﻿using System.Text;
+using Monad.Parsec;
 using parser.Parser;
 
 namespace parser.Expressions
 {
-    public class Expression : Term
+    public abstract class Expression : Term
     {
-        public Expression(SrcLoc location = null) : base(location)
+        protected Expression(SrcLoc location = null) : base(location)
         {
         }
+
+        public abstract void Print(StringBuilder sb);
+
+        public abstract void Simplify();
     }
 }

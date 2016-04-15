@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Net.Sockets;
 using Monad.Parsec;
 using Monad.Parsec.Expr;
 using Monad.Parsec.Token;
-using Monad.Utility;
 using parser.Expressions;
 using parser.Statements;
 
@@ -12,96 +10,97 @@ namespace parser.Parser
     public class LLanguageParser
     {
         // Terminal statements
-        private static Parser<Term> _skip;
-        private static Parser<Term> _read;
-        private static Parser<Term> _write;
-        private static Parser<Term> _assign;
-        private static Parser<Term> _whileDo;
-        private static Parser<Term> _ifThenElse;
+        private static Parser<Statement> _skip;
+        private static Parser<Statement> _read;
+        private static Parser<Statement> _write;
+        private static Parser<Statement> _assign;
+        private static Parser<Statement> _whileDo;
+        private static Parser<Statement> _ifThenElse;
 
         // Non-terminal statements
-        private static Parser<Term> _termStatement;
-        private static Parser<Term> _statement; 
-        private static Parser<Term> _semiStatement;
+        private static Parser<Statement> _termStatement;
+        private static Parser<Statement> _statement; 
+        private static Parser<Statement> _semiStatement;
 
         // Expressions
         private static Parser<Term> _number;
         private static Parser<Term> _variable;
-        private static Parser<Term> _expr; 
+        private static Parser<Term> _expr;
+
+        private static Parser<Program> _program; 
 
         public bool GetTree(string programToParse)
         {
             Parser<Term>[] exprlazy = {null};
             _expr = Prim.Lazy(() => exprlazy[0]);
-            Func<Parser<Term>, Parser<ImmutableList<Term>>> many = Prim.Many;
             Func<Parser<Term>, Parser<Term>> @try = Prim.Try;
 
             var def = new Language();
             var lexer = Tok.MakeTokenParser<Term>(def);
             var binops = BuildOperatorsTable(lexer);
 
-            var intLex = lexer.Integer;
             var parens = lexer.Parens;
-            var identifier = lexer.Identifier;
             var reserved = lexer.Reserved;
             var reservedOp = lexer.ReservedOp;
 
+            _number = from n in lexer.Integer
+                      select new Number(n) as Term;
+
+            _variable = from id in lexer.Identifier
+                        select new Variable(id) as Term;
+
             _read =
                 from r in reserved("read")
-                select new OperationIo() as Term;
+                from e in _expr
+                select new OperationIo(IoOperationType.Read, e as Expression, r.Location) as Statement;
 
             _write =
                 from w in reserved("write")
-                select new OperationIo() as Term;
+                from e in _expr
+                select new OperationIo(IoOperationType.Write, e as Expression, w.Location) as Statement;
 
             _skip = from s in reserved("skip")
-                    select new SkipStatement() as Term;
+                    select new SkipStatement(s.Location) as Statement;
 
             _assign =
-                from v in identifier
+                from v in _variable
                 from op in reservedOp(":=")
                 from e in _expr
-                select new Assign(v, e) as Term;
+                select new AssignStatement(v as Variable, e, v.Location) as Statement;
 
             _whileDo =
                 from _ in reserved("while")
                 from e in _expr
                 from __ in reserved("do")
-                from s in _statement
-                select new Statement() as Term;
+                from s in _termStatement
+                select new WhileDoStatement(e, s) as Statement;
 
             _ifThenElse =
                 from _ in reserved("if")
                 from c in _expr
                 from then in reserved("then")
-                from st1 in _statement
+                from st1 in _termStatement
                 from else_ in reserved("else")
-                from st2 in _statement
-                select new IfStatement(null, null, null) as Term;
+                from st2 in _termStatement
+                select new IfStatement(null, null, null) as Statement;
 
             _termStatement =
                 from s in _skip | _assign | _read | _write | _whileDo | _ifThenElse
-                select new Statement() as Term;
+                select s;
 
             _semiStatement =
                 from t in _termStatement
                 from _ in reservedOp(";")
                 from st in _semiStatement
-                select new Statement() as Term;
+                select new SemiStatement(t, st) as Statement;
 
             _statement =
                 from s in _semiStatement | _termStatement
-                select new Statement() as Term;
+                select s;
 
-            _number = from n in intLex
-                      select new Number(n) as Term;
-
-            _variable = from id in identifier
-                        select new Variable(id) as Term;
-
-            var subexpr = 
+            var subexpr =
                 from p in parens(_expr)
-                select new Expression() as Term;
+                select p;
 
             var factor = 
                 from f in @try(_number)
@@ -109,13 +108,13 @@ namespace parser.Parser
                                    | subexpr
                 select f;
 
-            var program = 
+            _program = 
                 from s in _statement
-                select new Program(s as Statement) as Term;
+                select new Program(s);
 
             exprlazy[0] = Ex.BuildExpressionParser(binops, factor);
 
-            var result = program.Parse(programToParse);
+            var result = _program.Parse(programToParse);
 
             return !result.IsFaulted;
         }

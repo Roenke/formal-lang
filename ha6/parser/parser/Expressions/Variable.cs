@@ -1,10 +1,10 @@
-﻿using Monad.Parsec;
+﻿using System.Text;
+using Monad.Parsec;
 using Monad.Parsec.Token;
-using parser.Parser;
 
 namespace parser.Expressions
 {
-    public class Variable : Term
+    public class Variable : Expression
     {
         public IdentifierToken Id;
         public Variable(IdentifierToken id, SrcLoc location = null)
@@ -12,6 +12,16 @@ namespace parser.Expressions
                 base(location)
         {
             Id = id;
+        }
+
+        public override void Print(StringBuilder sb)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Simplify()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

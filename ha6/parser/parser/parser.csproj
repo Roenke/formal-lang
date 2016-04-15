@@ -67,14 +67,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parser\SemiStatement.cs" />
-    <Compile Include="Statements\Assign.cs" />
+    <Compile Include="Expressions\Operation.cs" />
+    <Compile Include="Statements\SemiStatement.cs" />
+    <Compile Include="Statements\AssignStatement.cs" />
     <Compile Include="Expressions\BinaryOperation.cs" />
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Statements\IfStatement.cs" />
     <Compile Include="Expressions\Number.cs" />
     <Compile Include="Parser\Language.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Statements\IOOperationType.cs" />
     <Compile Include="Statements\OperationIO.cs" />
     <Compile Include="Parser\LLanguageParser.cs" />
     <Compile Include="Tools\PrettyPrinter.cs" />

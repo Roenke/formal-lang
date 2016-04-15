@@ -6,7 +6,7 @@ namespace Tests
     public class ParserTests
     {
         [Test]
-        public void SimpleTest()
+        public void SimpleProgramTest()
         {
             var parser = new LLanguageParser();
             Assert.True(parser.GetTree("skip"));
@@ -25,6 +25,25 @@ namespace Tests
             Assert.True(parser.GetTree("x := 1 + 2 * 4 / 3 % 3 - 1"));
             Assert.True(parser.GetTree("x := y == 2 && p == 3 || y != 2 && p != 4"));
             Assert.True(parser.GetTree("x := z < 3 || x > 6 || t <= 3 && v >= 3"));
+        }
+
+        [Test]
+        public void MultipleChoiceProgram()
+        {
+            var parser = new LLanguageParser();
+            Assert.True(parser.GetTree("if x < 10 then x := 10 else x := 10 ; y := 3"));
+        }
+
+        [Test]
+        public void PrettyPrinterTest()
+        {
+            
+        }
+
+        [Test]
+        public void ValidTreeTest()
+        {
+            
         }
     }
 }

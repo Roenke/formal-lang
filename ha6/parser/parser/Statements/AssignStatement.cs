@@ -1,13 +1,19 @@
 ﻿using System.Text;
 using Monad.Parsec;
+using parser.Expressions;
 using parser.Parser;
 
 namespace parser.Statements
 {
-    public class SkipStatement : Statement
+    public class AssignStatement : Statement
     {
-        public SkipStatement(SrcLoc location = null) : base(location)
+        public AssignStatement(SrcLoc location = null) : base(location)
         {
+        }
+
+        public AssignStatement(Variable leftVar, Term rightExpr, SrcLoc location) : base(location)
+        {
+            
         }
 
         public override void PrettyPrint(StringBuilder sb)

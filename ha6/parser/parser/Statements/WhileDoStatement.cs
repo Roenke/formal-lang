@@ -1,9 +1,10 @@
-﻿using Monad.Parsec;
+﻿using System.Text;
+using Monad.Parsec;
 using parser.Parser;
 
 namespace parser.Statements
 {
-    public class WhileDoStatement : Term
+    public class WhileDoStatement : Statement
     {
         public WhileDoStatement(SrcLoc location = null) : base(location)
         {
@@ -13,6 +14,16 @@ namespace parser.Statements
         public WhileDoStatement(Term location, Term term) : base(SrcLoc.EndOfSource)
         {
             
+        }
+
+        public override void PrettyPrint(StringBuilder sb)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Optimize()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
