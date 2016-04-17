@@ -31,7 +31,6 @@ namespace parser.Parser
 
         private static void Init()
         {
-            // TODO: Impelent custom Expression parser.
             Parser<Statement>[] termStatement = {null};
             Parser<Expression>[] exprlazy = { null };
             var expr = Prim.Lazy(() => exprlazy[0]);
@@ -86,18 +85,18 @@ namespace parser.Parser
                 select new IfStatement(c, st1, st2, i.Location) as Statement;
 
             termStatement[0] =
-                from s in skip | assign | read | write | whileDo | ifThenElse
+                from s in Prim.Try(skip) | Prim.Try(assign) | Prim.Try(read) | Prim.Try(write) | Prim.Try(whileDo) | Prim.Try(ifThenElse)
                 select s;
 
-            Parser<Statement>[] semiStatement = {null};
-            semiStatement[0] =
+            Parser<Statement>[] statement = {null};
+            var semiStatement =
                 from t in termStatement[0]
-                from _ in reserved(";")
-                from st in semiStatement[0]
+                from _ in lexer.ReservedOp(";")
+                from st in statement[0]
                 select new SemiStatement(t, st) as Statement;
 
-            var statement =
-                from s in semiStatement[0] | termStatement[0]
+            statement[0] =
+                from s in Prim.Try(semiStatement) | termStatement[0]
                 select s;
 
             var subexpr =
@@ -109,7 +108,7 @@ namespace parser.Parser
                 select f;
 
             _program =
-                from s in statement
+                from s in statement[0]
                 select new Program(s);
 
             exprlazy[0] = Ex.BuildExpressionParser(binops, factor);

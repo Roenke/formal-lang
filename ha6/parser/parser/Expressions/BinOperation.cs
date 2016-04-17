@@ -13,10 +13,11 @@ namespace parser.Expressions
 
         public override void Print(StringBuilder sb)
         {
-            sb.Append("( ");
+            sb.Append("(");
             _left.Print(sb);
             sb.AppendFormat(" {0} ", _operation);
             _right.Print(sb);
+            sb.Append(")");
         }
 
         public override void Simplify()

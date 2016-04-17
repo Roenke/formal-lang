@@ -16,6 +16,7 @@ namespace parser.Statements
         public override void PrettyPrint(StringBuilder sb)
         {
             _left.PrettyPrint(sb);
+            sb.Append(";");
             sb.AppendLine();
             _right.PrettyPrint(sb);
         }

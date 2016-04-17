@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using parser.Parser;
 
 namespace Tests
@@ -49,7 +50,10 @@ namespace Tests
         [Test]
         public void PrettyPrinterTest()
         {
-            
+            var parser = new LLanguageParser();
+
+            Console.WriteLine(parser.GetTree("skip;skip;skip").PrettyPrint());
+            Console.WriteLine(parser.GetTree("x := (1 + 1); y := (2 + 3)").PrettyPrint());
         }
 
         [Test]

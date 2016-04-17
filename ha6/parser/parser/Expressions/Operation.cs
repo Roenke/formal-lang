@@ -6,12 +6,16 @@ namespace parser.Expressions
 {
     public class Operation : Term
     {
-        public Operation(SrcLoc location) : base(location)
+        public Operation(StringToken opToken, SrcLoc location) : base(location)
         {
+            _op = string.Join("", opToken.Value.Select(x => x.Value));
         }
 
-        public Operation(ReservedOpToken opToken, SrcLoc location) : base(location)
+        public override string ToString()
         {
+            return _op;
         }
+
+        private readonly string _op;
     }
 }
