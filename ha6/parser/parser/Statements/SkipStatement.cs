@@ -10,9 +10,11 @@ namespace parser.Statements
         {
         }
 
-        public override void PrettyPrint(StringBuilder sb)
+        public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
-            sb.Append("skip");
+            var tabs = new string('\t', tabCount);
+
+            sb.Append(tabs).Append("skip");
         }
 
         public override void Optimize()

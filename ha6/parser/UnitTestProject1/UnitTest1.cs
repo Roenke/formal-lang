@@ -10,13 +10,18 @@ namespace Tests
         public void SimpleProgramTest()
         {
             var parser = new LLanguageParser();
-            Assert.NotNull(parser.GetTree("skip"));
-            Assert.Null(parser.GetTree("unknown asds"));
-            Assert.NotNull(parser.GetTree("x := 1 + 1"));
-            Assert.NotNull(parser.GetTree("if (1 < 3) then x := 3 else skip"));
-            Assert.NotNull(parser.GetTree("skip ; skip"));
-            Assert.NotNull(parser.GetTree("while (x < 10) do x := (x + (10 * 120))"));
-            Assert.NotNull(parser.GetTree("if (1 < 3) then x := 3 else skip; while x < 10 do x := ((x + 10) * 120); skip"));
+            Assert.IsNotEmpty(parser.GetTree("skip"));
+            Assert.IsEmpty(parser.GetTree("unknown asds"));
+            Assert.IsNotEmpty(parser.GetTree("x := 1 + 1"));
+            Assert.IsNotEmpty(parser.GetTree("if (1 < 3) then x := 3 else skip"));
+            Assert.IsNotEmpty(parser.GetTree("skip ; skip"));
+            Assert.IsNotEmpty(parser.GetTree("while (x < 10) do x := (x + (10 * 120))"));
+
+            var nonUnique =
+                parser.GetTree("if (1 < 3) then x := 3 else skip; while x < 10 do x := ((x + 10) * 120); skip");
+            Assert.IsNotEmpty(nonUnique);
+            Console.WriteLine(nonUnique[0].PrettyPrint());
+
         }
 
         [Test]
@@ -52,8 +57,8 @@ namespace Tests
         {
             var parser = new LLanguageParser();
 
-            Console.WriteLine(parser.GetTree("skip;skip;skip").PrettyPrint());
-            Console.WriteLine(parser.GetTree("x := (1 + 1); y := (2 + 3)").PrettyPrint());
+            Console.WriteLine(parser.GetTree("skip;skip;skip")[0].PrettyPrint());
+            Console.WriteLine(parser.GetTree("x := (1 + 1); y := (2 + 3)")[0].PrettyPrint());
         }
 
         [Test]

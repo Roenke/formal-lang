@@ -6,7 +6,7 @@ namespace parser.Statements
 {
     public abstract class Statement : Term
     {
-        public abstract void PrettyPrint(StringBuilder sb);
+        public abstract void PrettyPrint(StringBuilder sb, int tabCount);
 
         public abstract void Optimize();
 

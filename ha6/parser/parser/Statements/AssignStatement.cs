@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Monad.Parsec;
 using parser.Expressions;
 
@@ -16,8 +17,10 @@ namespace parser.Statements
             _rightExpression = rightExpr;
         }
 
-        public override void PrettyPrint(StringBuilder sb)
+        public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
+            var tabs = new string('\t', tabCount);
+            sb.Append(tabs);
             _var.Print(sb);
             sb.Append(" := ");
             _rightExpression.Print(sb);

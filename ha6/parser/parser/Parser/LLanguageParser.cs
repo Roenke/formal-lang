@@ -17,16 +17,11 @@ namespace parser.Parser
             Init();
         }
 
-        public Program GetTree(string programToParse)
+        public Program[] GetTree(string programToParse)
         {
             var result = _program.Parse(programToParse);
 
-            if (!result.IsFaulted && result.Value.Length > 1)
-            {
-                throw new NotUniqueParseException("Result of parsing \"" + programToParse + "\" not unique");
-            }
-
-            return result.IsFaulted ? null : result.Value.First().Item1;
+            return result.Value.Select(x => x.Item1).ToArray();
         }
 
         private static void Init()
@@ -88,7 +83,7 @@ namespace parser.Parser
                 from s in Prim.Try(skip) | Prim.Try(assign) | Prim.Try(read) | Prim.Try(write) | Prim.Try(whileDo) | Prim.Try(ifThenElse)
                 select s;
 
-            Parser<Statement>[] statement = {null};
+            Parser<Statement>[] statement = { null };
             var semiStatement =
                 from t in termStatement[0]
                 from _ in lexer.ReservedOp(";")

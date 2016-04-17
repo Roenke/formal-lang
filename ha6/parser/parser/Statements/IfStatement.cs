@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
 using parser.Expressions;
-using parser.Parser;
 
 namespace parser.Statements
 {
@@ -14,15 +13,15 @@ namespace parser.Statements
             _elseStatement = elseStatement;
         }
 
-        public override void PrettyPrint(StringBuilder sb)
+        public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
-            sb.Append("if ");
+            var tabs = new string('\t', tabCount);
+            sb.Append(tabs).Append("if ");
             _condition.Print(sb);
-            sb.Append("then");
-            sb.AppendLine();
-            _thenStatement.PrettyPrint(sb);
-            sb.AppendLine("else");
-            _elseStatement.PrettyPrint(sb);
+            sb.AppendLine().Append(tabs).AppendLine("then");
+            _thenStatement.PrettyPrint(sb, tabCount + 1);
+            sb.AppendLine().Append(tabs).AppendLine("else");
+            _elseStatement.PrettyPrint(sb, tabCount + 1);
         }
 
         public override void Optimize()

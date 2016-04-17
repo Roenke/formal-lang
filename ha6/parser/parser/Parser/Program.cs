@@ -16,7 +16,7 @@ namespace parser.Parser
         public string PrettyPrint()
         {
             var sb = new StringBuilder();
-            _statement.PrettyPrint(sb);
+            _statement.PrettyPrint(sb, 0);
             return sb.ToString();
         }
     }

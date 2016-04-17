@@ -12,13 +12,13 @@ namespace parser.Statements
             _statement = statement;
         }
 
-        public override void PrettyPrint(StringBuilder sb)
+        public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
-            sb.Append("while ");
+            var tabs = new string('\t', tabCount);
+            sb.Append(tabs).Append("while ");
             _condition.Print(sb);
-            sb.AppendLine("do");
-            _statement.PrettyPrint(sb);
-            sb.AppendLine();
+            sb.AppendLine().Append(tabs).AppendLine("do");
+            _statement.PrettyPrint(sb, tabCount + 1);
         }
 
         public override void Optimize()

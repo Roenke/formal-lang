@@ -14,9 +14,11 @@ namespace parser.Statements
             _rightExpression = e;
         }
 
-        public override void PrettyPrint(StringBuilder sb)
+        public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
-            sb.Append(_opType == IoOperationType.Read ? "read " : "write ");
+            var tabs = new string('\t', tabCount);
+
+            sb.Append(tabs).Append(_opType == IoOperationType.Read ? "read " : "write ");
             _rightExpression.Print(sb);
         }
 

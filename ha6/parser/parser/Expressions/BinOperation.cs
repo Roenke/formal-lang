@@ -27,8 +27,8 @@ namespace parser.Expressions
             _right.Simplify();
         }
 
-        private static Expression _left;
-        private static Expression _right;
-        private static Operation _operation;
+        private readonly Expression _left;
+        private readonly Expression _right;
+        private readonly Operation _operation;
     }
 }

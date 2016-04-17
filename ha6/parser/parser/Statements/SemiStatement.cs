@@ -13,12 +13,11 @@ namespace parser.Statements
             _right = right;
         }
 
-        public override void PrettyPrint(StringBuilder sb)
+        public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
-            _left.PrettyPrint(sb);
-            sb.Append(";");
-            sb.AppendLine();
-            _right.PrettyPrint(sb);
+            _left.PrettyPrint(sb, tabCount);
+            sb.AppendLine(";");
+            _right.PrettyPrint(sb, tabCount);
         }
 
         public override void Optimize()
