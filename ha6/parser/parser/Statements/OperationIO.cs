@@ -1,13 +1,12 @@
 ﻿using System.Text;
 using Monad.Parsec;
 using parser.Expressions;
-using parser.Parser;
 
 namespace parser.Statements
 {
     public class OperationIo : Statement
     {
-        private IoOperationType _opType;
+        private readonly IoOperationType _opType;
 
         public OperationIo(IoOperationType type, Expression e, SrcLoc location) : base(location)
         {

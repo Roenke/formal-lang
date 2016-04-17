@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\BinOperation.cs" />
     <Compile Include="Expressions\Operation.cs" />
     <Compile Include="Parser\NotUniqueParseException.cs" />
     <Compile Include="Statements\SemiStatement.cs" />

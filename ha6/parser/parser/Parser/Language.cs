@@ -7,8 +7,8 @@ namespace parser.Parser
     {
         public Language()
         {
-            ReservedOpNames = new List<string> { "+", "-", "*", "/", "%", "==", "!=", ">", ">=", "<", "<=", "&&", "||", ";", ":="};
-            ReservedNames = new List<string> { "skip", "write", "read", "while", "do", "if", "then", "else" };
+            ReservedOpNames = new List<string> { "+", "-", "*", "/", "%", "==", "!=", ">", ">=", "<", "<=", "&&", "||",};
+            ReservedNames = new List<string> { "skip", "write", "read", "while", "do", "if", "then", "else", "(", ")" , ";", ":=" };
             CaseSensitive = true;
         }
     }
