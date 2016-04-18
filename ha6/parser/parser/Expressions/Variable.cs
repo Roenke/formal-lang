@@ -16,6 +16,12 @@ namespace parser.Expressions
             Name = string.Join("", id.Value.Select(x => x.Value));
         }
 
+        public Variable(string name, SrcLoc location)
+            : base(location)
+        {
+            Name = name;
+        }
+
         public string Name { get; }
 
         public override void Print(StringBuilder sb)

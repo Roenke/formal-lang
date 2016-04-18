@@ -6,6 +6,12 @@ if 0 then
 else
 	write 24;
 x := 10;
+y := 0;
+p := u;
+v := 1;
+v := 1;
+z := 1;
+k := d;
 while (x < 20) do
 	x := (x + 1);
 x := 20;

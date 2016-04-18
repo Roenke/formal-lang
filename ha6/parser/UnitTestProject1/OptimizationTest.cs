@@ -156,13 +156,33 @@ namespace Tests
         [Test]
         public void CleanupContexInWhileLoopBodyTest()
         {
-            var tree = Parser.GetTree("x := 10; while y < 200 do z := 1 * x; y := (x * 2)");
+            var tree = Parser.GetTree("x := 10; while y < 200 do z := 2 * x; y := (x * 2)");
             tree.OptimizeExpressions(ExpressionOptimizer);
             var whileStatement = (WhileDoStatement)((SemiStatement)((SemiStatement)tree.Statement).SecondStatement).FirstStatement;
             Assert.True(whileStatement.LoopBody is AssignStatement);
 
             var assign = (AssignStatement) whileStatement.LoopBody;
             Assert.True(assign.RightPart is BinOperation);
+        }
+
+        [Test]
+        public void TrivialMulOptimizeTest()
+        {
+            var tree = Parser.GetTree("x := (0 * y)");
+            tree.OptimizeExpressions(ExpressionOptimizer);
+            var expr = ((AssignStatement) tree.Statement).RightPart;
+            Assert.True(expr is Number);
+            Assert.AreEqual(0, ((Number)expr).Value);
+        }
+
+        [Test]
+        public void TrivialAndOptimizeTest()
+        {
+            var tree = Parser.GetTree("x := (y && 0)");
+            tree.OptimizeExpressions(ExpressionOptimizer);
+            var expr = ((AssignStatement)tree.Statement).RightPart;
+            Assert.True(expr is Number);
+            Assert.AreEqual(0, ((Number)expr).Value);
         }
     }
 }
