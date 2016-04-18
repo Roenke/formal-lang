@@ -1,9 +1,10 @@
 read x;
 read y;
 x := 10;
+j := 10;
 while (x < 20) do
 	x := (x + 1);
-write x;
+write 10;
 z := 38;
 while 9 do
 	if (x > 20) then

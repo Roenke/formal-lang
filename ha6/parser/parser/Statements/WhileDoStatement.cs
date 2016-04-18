@@ -27,9 +27,12 @@ namespace parser.Statements
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
+            var context = optimizer.PopContext();
             if (Condition.Accept(optimizer))
                 Condition = Condition.Optimized;
             LoopBody.OptimizeExpression(optimizer);
+
+            optimizer.PushContext(context);
             return false;
         }
 

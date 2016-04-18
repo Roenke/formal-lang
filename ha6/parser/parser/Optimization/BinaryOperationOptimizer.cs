@@ -25,7 +25,9 @@ namespace parser.Optimization
 
                 { BinOp.And, (l, r) => ToInt32(l != 0 && r != 0) },
                 { BinOp.Or, (l, r) => ToInt32(l != 0 || r != 0) }
-            }; 
+            };
+
+        public Context Context { get; private set; } = new Context();
 
         public bool Visit(BinOperation op)
         {
@@ -39,6 +41,18 @@ namespace parser.Optimization
 
             op.Optimized = new Number(SimplifyRules[op.Operation.Op](left, right), op.Location);
             return true;
+        }
+
+        public Context PopContext()
+        {
+            var context = Context;
+            Context = new Context();
+            return context;
+        }
+
+        public void PushContext(Context context)
+        {
+            Context = context;
         }
     }
 }

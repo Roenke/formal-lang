@@ -23,7 +23,10 @@ namespace parser.Expressions
 
         public override bool Accept(IExpressionOptimizer optimizer)
         {
-            return false;
+            if (!optimizer.Context.Contains(Name)) return false;
+
+            Optimized = new Number(optimizer.Context.GetValue(Name), Location);
+            return true;
         }
     }
 }

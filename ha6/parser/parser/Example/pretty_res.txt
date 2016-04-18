@@ -3,6 +3,10 @@ skip;
 read x;
 read y;
 x := 10;
+if (x <= 10) then
+	j := 10
+else
+	p := 15;
 while (x < 20) do
 	x := (x + 1);
 if ((1 < 2) || (3 > 2)) then

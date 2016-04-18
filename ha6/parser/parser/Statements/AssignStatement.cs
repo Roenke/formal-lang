@@ -26,6 +26,11 @@ namespace parser.Statements
         {
             if (_rightExpression.Accept(optimizer))
                 _rightExpression = _rightExpression.Optimized;
+
+            var right = _rightExpression as Number;
+            if(right != null)
+                optimizer.Context.Addvalue(_var.Name, right.Value);
+
             return false;
         }
 
