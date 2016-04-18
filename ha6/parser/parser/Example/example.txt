@@ -1,6 +1,9 @@
 ﻿skip; skip; read x; read y; x := 10;
 if (x < 10) then j := 10 else if (x > 12) then write 12 else write 12 * 2; 
-while (x < 20) do x := (x + 1); 
+x := 10;
+while (x < 20) do x := (x + 1);
+x := 20;
+while (x < 20) do x := (x + 1);
 if ((1 < 2) || (3 > 2)) then write x else write y;
 skip;
 skip;

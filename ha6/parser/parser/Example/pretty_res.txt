@@ -10,6 +10,10 @@ else
 		write 12
 	else
 		write (12 * 2);
+x := 10;
+while (x < 20) do
+	x := (x + 1);
+x := 20;
 while (x < 20) do
 	x := (x + 1);
 if ((1 < 2) || (3 > 2)) then

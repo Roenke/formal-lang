@@ -36,5 +36,16 @@ namespace parser.Expressions
 
             return optimizer.Visit(this);
         }
+
+        public override int? EvalInContext(IExpressionOptimizer optimizer)
+        {
+            var left = Left.EvalInContext(optimizer);
+            var right = Right.EvalInContext(optimizer);
+            var opt = optimizer as BinaryOperationOptimizer;
+            if (left == null || right == null || opt == null)
+                return null;
+
+            return opt.Eval(left.Value, right.Value, Operation.Op);
+        }
     }
 }

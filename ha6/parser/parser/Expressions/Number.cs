@@ -24,5 +24,9 @@ namespace parser.Expressions
             return false;
         }
 
+        public override int? EvalInContext(IExpressionOptimizer optimizer)
+        {
+            return Value;
+        }
     }
 }

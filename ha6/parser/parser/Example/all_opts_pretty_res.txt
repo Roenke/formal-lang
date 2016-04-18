@@ -5,9 +5,11 @@ if 0 then
 	write 12
 else
 	write 24;
+x := 10;
 while (x < 20) do
 	x := (x + 1);
-write 10;
+x := 20;
+write 20;
 z := 38;
 while 9 do
 	if (x > 20) then

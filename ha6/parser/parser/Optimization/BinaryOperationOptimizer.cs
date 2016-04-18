@@ -55,5 +55,10 @@ namespace parser.Optimization
         {
             Context = context;
         }
+
+        public int Eval(int left, int right, BinOp op)
+        {
+            return SimplifyRules[op](left, right);
+        }
     }
 }

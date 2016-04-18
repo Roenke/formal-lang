@@ -10,10 +10,14 @@ else
 		write 12
 	else
 		write 24;
+x := 10;
 while (x < 20) do
 	x := (x + 1);
+x := 20;
+while 0 do
+	x := (x + 1);
 if 1 then
-	write 10
+	write 20
 else
 	write y;
 skip;
