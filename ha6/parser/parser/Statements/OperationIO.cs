@@ -7,29 +7,30 @@ namespace parser.Statements
 {
     public class OperationIo : Statement
     {
-        private readonly IoOperationType _opType;
-
         public OperationIo(IoOperationType type, Expression e, SrcLoc location) : base(location)
         {
-            _opType = type;
-            _rightExpression = e;
+            OperationType = type;
+            Expression = e;
         }
+
+        public Expression Expression { get; private set; }
+        public IoOperationType OperationType { get; }
 
         public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
             var tabs = new string('\t', tabCount);
 
-            sb.Append(tabs).Append(_opType == IoOperationType.Read ? "read " : "write ");
-            _rightExpression.Print(sb);
+            sb.Append(tabs).Append(OperationType == IoOperationType.Read ? "read " : "write ");
+            Expression.Print(sb);
         }
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
-            if (_opType == IoOperationType.Read)
+            if (OperationType == IoOperationType.Read)
                 optimizer.PopContext();
 
-            if (_rightExpression.Accept(optimizer))
-                _rightExpression = _rightExpression.Optimized;
+            if (Expression.Accept(optimizer))
+                Expression = Expression.Optimized;
 
             return false;
         }
@@ -38,7 +39,5 @@ namespace parser.Statements
         {
             return false;
         }
-
-        private Expression _rightExpression;
     }
 }

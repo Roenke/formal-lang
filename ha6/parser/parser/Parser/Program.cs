@@ -9,28 +9,28 @@ namespace parser.Parser
     {
         public Program(Statement statement, SrcLoc location = null) : base(location)
         {
-            _statement = statement;
+            Statement = statement;
         }
 
-        private Statement _statement;
+        public Statement Statement { get; private set; }
 
         public void OptimizeExpressions(IExpressionOptimizer optimizer)
         {
-            _statement.OptimizeExpression(optimizer);
+            Statement.OptimizeExpression(optimizer);
         }
 
         public void OptimizeStatement(IStatementOptimizer optimizer)
         {
-            if (_statement.OptimizeStatement(optimizer))
+            if (Statement.OptimizeStatement(optimizer))
             {
-                _statement = _statement.Optimized;
+                Statement = Statement.Optimized;
             }
         }
 
         public string PrettyPrint()
         {
             var sb = new StringBuilder();
-            _statement.PrettyPrint(sb, 0);
+            Statement.PrettyPrint(sb, 0);
             return sb.ToString();
         }
     }

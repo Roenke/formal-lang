@@ -9,31 +9,34 @@ namespace parser.Statements
     {
         public AssignStatement(Variable leftVar, Expression rightExpr, SrcLoc location) : base(location)
         {
-            _var = leftVar;
-            _rightExpression = rightExpr;
+            Var = leftVar;
+            RightPart = rightExpr;
         }
+
+        public Variable Var { get; }
+        public Expression RightPart { get; private set; }
 
         public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
             var tabs = new string('\t', tabCount);
             sb.Append(tabs);
-            _var.Print(sb);
+            Var.Print(sb);
             sb.Append(" := ");
-            _rightExpression.Print(sb);
+            RightPart.Print(sb);
         }
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
-            if (_rightExpression.Accept(optimizer))
-                _rightExpression = _rightExpression.Optimized;
+            if (RightPart.Accept(optimizer))
+                RightPart = RightPart.Optimized;
 
-            var right = _rightExpression as Number;
+            var right = RightPart as Number;
             if (right == null) return false;
 
             if (!optimizer.IsNested)
-                optimizer.Context.Addvalue(_var.Name, right.Value);
+                optimizer.Context.Addvalue(Var.Name, right.Value);
             else
-                optimizer.Context.ClearKey(_var.Name);
+                optimizer.Context.ClearKey(Var.Name);
 
             return false;
         }
@@ -42,8 +45,5 @@ namespace parser.Statements
         {
             return false;
         }
-
-        private readonly Variable _var;
-        private Expression _rightExpression;
     }
 }
