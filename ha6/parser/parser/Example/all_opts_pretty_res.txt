@@ -1,0 +1,14 @@
+read x;
+read y;
+x := 10;
+while (x < 20) do
+	x := (x + 1);
+write x;
+z := 38;
+while 9 do
+	if (x > 20) then
+		skip
+	else
+		while (x < 23) do
+			x := (y + 1);
+skip
