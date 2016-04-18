@@ -27,6 +27,7 @@ namespace parser.Optimization
                 { BinOp.Or, (l, r) => ToInt32(l != 0 || r != 0) }
             };
 
+        public bool IsNested { get; set; }
         public Context Context { get; private set; } = new Context();
 
         public bool Visit(BinOperation op)

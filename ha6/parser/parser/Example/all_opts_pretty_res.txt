@@ -1,7 +1,10 @@
 read x;
 read y;
 x := 10;
-j := 10;
+if 0 then
+	write 12
+else
+	write 24;
 while (x < 20) do
 	x := (x + 1);
 write 10;

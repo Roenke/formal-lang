@@ -3,10 +3,13 @@ skip;
 read x;
 read y;
 x := 10;
-if 1 then
+if 0 then
 	j := 10
 else
-	p := 15;
+	if 0 then
+		write 12
+	else
+		write 24;
 while (x < 20) do
 	x := (x + 1);
 if 1 then

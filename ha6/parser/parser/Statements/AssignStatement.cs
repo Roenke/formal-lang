@@ -28,8 +28,12 @@ namespace parser.Statements
                 _rightExpression = _rightExpression.Optimized;
 
             var right = _rightExpression as Number;
-            if(right != null)
+            if (right == null) return false;
+
+            if (!optimizer.IsNested)
                 optimizer.Context.Addvalue(_var.Name, right.Value);
+            else
+                optimizer.Context.ClearKey(_var.Name);
 
             return false;
         }

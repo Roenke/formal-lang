@@ -32,11 +32,13 @@ namespace parser.Statements
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
+            var nesting = optimizer.IsNested;
             if (Condition.Accept(optimizer))
                 Condition = Condition.Optimized;
+            optimizer.IsNested = true;
             ThenStatement.OptimizeExpression(optimizer);
             ElseStatement.OptimizeExpression(optimizer);
-
+            optimizer.IsNested = nesting;
             return false;
         }
 

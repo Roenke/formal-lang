@@ -7,6 +7,7 @@ namespace parser.Optimization
     {
         bool Visit(BinOperation op);
 
+        bool IsNested { get; set; }
         Context Context { get; }
 
         Context PopContext();

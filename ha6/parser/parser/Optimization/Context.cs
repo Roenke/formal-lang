@@ -25,5 +25,10 @@ namespace parser.Optimization
         {
             _context[var] = val;
         }
+
+        public void ClearKey(string var)
+        {
+            _context.Remove(var);
+        }
     }
 }

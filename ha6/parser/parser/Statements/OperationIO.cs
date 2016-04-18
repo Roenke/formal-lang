@@ -25,6 +25,9 @@ namespace parser.Statements
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
+            if (_opType == IoOperationType.Read)
+                optimizer.PopContext();
+
             if (_rightExpression.Accept(optimizer))
                 _rightExpression = _rightExpression.Optimized;
 
