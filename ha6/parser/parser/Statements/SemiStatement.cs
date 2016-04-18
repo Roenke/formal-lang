@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
 using parser.Optimization;
-using parser.Parser;
 
 namespace parser.Statements
 {
@@ -10,25 +9,35 @@ namespace parser.Statements
         public SemiStatement(Statement left, Statement right)
             : base(SrcLoc.EndOfSource)
         {
-            _left = left;
-            _right = right;
+            FirstStatement = left;
+            SecondStatement = right;
         }
+
+        public Statement FirstStatement { get; set; }
+        public Statement SecondStatement { get; set; }
 
         public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
-            _left.PrettyPrint(sb, tabCount);
+            FirstStatement.PrettyPrint(sb, tabCount);
             sb.AppendLine(";");
-            _right.PrettyPrint(sb, tabCount);
+            SecondStatement.PrettyPrint(sb, tabCount);
         }
 
-        public override bool Optimize(IExpressionOptimizer optimizer)
+        public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
-            _left.Optimize(optimizer);
-            _right.Optimize(optimizer);
+            FirstStatement.OptimizeExpression(optimizer);
+            SecondStatement.OptimizeExpression(optimizer);
             return false;
         }
 
-        private readonly Statement _left;
-        private readonly Statement _right;
+        public override bool OptimizeStatement(IStatementOptimizer optimizer)
+        {
+            if (FirstStatement.OptimizeStatement(optimizer))
+                FirstStatement = FirstStatement.Optimized;
+            if (SecondStatement.OptimizeStatement(optimizer))
+                SecondStatement = SecondStatement.Optimized;
+
+            return optimizer.Visit(this);
+        }
     }
 }

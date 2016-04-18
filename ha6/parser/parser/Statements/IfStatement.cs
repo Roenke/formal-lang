@@ -9,34 +9,46 @@ namespace parser.Statements
     {
         public IfStatement(Expression expr, Statement thenStatement, Statement elseStatement, SrcLoc location) : base(location)
         {
-            _condition = expr;
-            _thenStatement = thenStatement;
-            _elseStatement = elseStatement;
+            Condition = expr;
+            ThenStatement = thenStatement;
+            ElseStatement = elseStatement;
         }
+
+        public Expression Condition { get; private set; }
+
+        public Statement ThenStatement { get; private set; }
+        public Statement ElseStatement { get; private set; }
 
         public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
             var tabs = new string('\t', tabCount);
             sb.Append(tabs).Append("if ");
-            _condition.Print(sb);
+            Condition.Print(sb);
             sb.AppendLine(" then");
-            _thenStatement.PrettyPrint(sb, tabCount + 1);
+            ThenStatement.PrettyPrint(sb, tabCount + 1);
             sb.AppendLine().Append(tabs).AppendLine("else");
-            _elseStatement.PrettyPrint(sb, tabCount + 1);
+            ElseStatement.PrettyPrint(sb, tabCount + 1);
         }
 
-        public override bool Optimize(IExpressionOptimizer optimizer)
+        public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
-            _condition.Accept(optimizer);
-            _thenStatement.Optimize(optimizer);
-            _elseStatement.Optimize(optimizer);
+            if (Condition.Accept(optimizer))
+                Condition = Condition.Optimized;
+            ThenStatement.OptimizeExpression(optimizer);
+            ElseStatement.OptimizeExpression(optimizer);
 
-            // TODO: Add optimization logic
             return false;
         }
 
-        private readonly Expression _condition;
-        private readonly Statement _thenStatement;
-        private readonly Statement _elseStatement;
+        public override bool OptimizeStatement(IStatementOptimizer optimizer)
+        {
+            if (ThenStatement.OptimizeStatement(optimizer))
+                ThenStatement = ThenStatement.Optimized;
+
+            if (ThenStatement.OptimizeStatement(optimizer))
+                ElseStatement = ElseStatement.Optimized;
+
+            return optimizer.Visit(this);
+        }
     }
 }

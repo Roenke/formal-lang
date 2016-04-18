@@ -72,6 +72,8 @@
     <Compile Include="Expressions\Operation.cs" />
     <Compile Include="Optimization\IExpressionOptimizer.cs" />
     <Compile Include="Optimization\BinaryOperationOptimizer.cs" />
+    <Compile Include="Optimization\IStatementOptimizer.cs" />
+    <Compile Include="Optimization\StatementOptimizer.cs" />
     <Compile Include="Parser\NotUniqueParseException.cs" />
     <Compile Include="Statements\SemiStatement.cs" />
     <Compile Include="Statements\AssignStatement.cs" />

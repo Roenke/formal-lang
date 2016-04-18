@@ -18,7 +18,12 @@ namespace parser.Statements
             sb.Append(tabs).Append("skip");
         }
 
-        public override bool Optimize(IExpressionOptimizer optimizer)
+        public override bool OptimizeExpression(IExpressionOptimizer optimizer)
+        {
+            return false;
+        }
+
+        public override bool OptimizeStatement(IStatementOptimizer optimizer)
         {
             return false;
         }

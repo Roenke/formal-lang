@@ -26,14 +26,20 @@ namespace parser.Statements
             _rightExpression.Print(sb);
         }
 
-        public override bool Optimize(IExpressionOptimizer optimizer)
+        public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
-            _rightExpression.Accept(optimizer);
+            if (_rightExpression.Accept(optimizer))
+                _rightExpression = _rightExpression.Optimized;
             // TODO: logic
             return false;
         }
 
+        public override bool OptimizeStatement(IStatementOptimizer optimizer)
+        {
+            return false;
+        }
+
         private readonly Variable _var;
-        private readonly Expression _rightExpression;
+        private Expression _rightExpression;
     }
 }

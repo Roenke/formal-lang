@@ -51,7 +51,7 @@ namespace Tests
             Console.WriteLine(parser.GetTree("skip;skip;skip").PrettyPrint()); Console.WriteLine();
             Console.WriteLine(parser.GetTree("x := (1 + 1); y := (2 + 3)").PrettyPrint()); Console.WriteLine();
             Console.WriteLine(parser
-                .GetTree("if (1 < 3) then x := (2 + 4) else while (y < 10) do while (z < y) do if (z < 3) then z := z + 1 else y := y - 1; skip")
+                .GetTree("if (1 < 3) then x := (2 + 4) else while (y < 10) do while (z < y) do if (z < 3) then z := z + 1 else y := y - 1; skip;skip")
                 .PrettyPrint()); Console.WriteLine();
             Console.WriteLine(parser.GetTree("if x < 10 then write x else read z").PrettyPrint());
         }

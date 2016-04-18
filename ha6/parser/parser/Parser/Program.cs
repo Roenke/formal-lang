@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
+using parser.Optimization;
 using parser.Statements;
 
 namespace parser.Parser
@@ -11,7 +12,20 @@ namespace parser.Parser
             _statement = statement;
         }
 
-        private readonly Statement _statement;
+        private Statement _statement;
+
+        public void OptimizeExpressions(IExpressionOptimizer optimizer)
+        {
+            _statement.OptimizeExpression(optimizer);
+        }
+
+        public void OptimizeStatement(IStatementOptimizer optimizer)
+        {
+            if (_statement.OptimizeStatement(optimizer))
+            {
+                _statement = _statement.Optimized;
+            }
+        }
 
         public string PrettyPrint()
         {

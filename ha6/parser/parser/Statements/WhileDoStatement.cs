@@ -9,27 +9,38 @@ namespace parser.Statements
     {
         public WhileDoStatement(Expression expr, Statement statement, SrcLoc location) : base(location)
         {
-            _condition = expr;
-            _statement = statement;
+            Condition = expr;
+            LoopBody = statement;
         }
+
+        public Expression Condition { get; private set; }
+        public Statement LoopBody { get; private set; }
 
         public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
             var tabs = new string('\t', tabCount);
             sb.Append(tabs).Append("while ");
-            _condition.Print(sb);
+            Condition.Print(sb);
             sb.AppendLine(" do");
-            _statement.PrettyPrint(sb, tabCount + 1);
+            LoopBody.PrettyPrint(sb, tabCount + 1);
         }
 
-        public override bool Optimize(IExpressionOptimizer optimizer)
+        public override bool OptimizeExpression(IExpressionOptimizer optimizer)
         {
-            _condition.Accept(optimizer);
-            _statement.Optimize(optimizer);
+            if (Condition.Accept(optimizer))
+                Condition = Condition.Optimized;
+            LoopBody.OptimizeExpression(optimizer);
             return false;
         }
 
-        private readonly Expression _condition;
-        private readonly Statement _statement;
+        public override bool OptimizeStatement(IStatementOptimizer optimizer)
+        {
+            if (LoopBody.OptimizeStatement(optimizer))
+            {
+                LoopBody = LoopBody.Optimized;
+            }
+
+            return optimizer.Visit(this);
+        }
     }
 }
