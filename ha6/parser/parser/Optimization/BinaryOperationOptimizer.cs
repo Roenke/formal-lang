@@ -109,7 +109,7 @@ namespace parser.Optimization
                     }
                     break;
                 case BinOp.And:
-                    op.Optimized = num.Value == 0 ? new Number(1, op.Location) : right;
+                    op.Optimized = num.Value == 0 ? new Number(0, op.Location) : right;
                     return true;
                 case BinOp.Or:
                     op.Optimized = num.Value == 0 ? right : new Number(1, op.Location);

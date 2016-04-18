@@ -17,6 +17,8 @@ namespace parser
                 Environment.Exit(1);
             }
 
+            var expressionOptimizer = new BinaryOperationOptimizer();
+            var statementoptimizer = new StatementOptimizer();
             var content = File.ReadAllText(args[0]);
 
             var parser = new LLanguageParser(new LLanguageDefinition());
@@ -30,17 +32,20 @@ namespace parser
             Console.WriteLine("Building tree completed. Time = {0} ms", sw.ElapsedMilliseconds);
             File.WriteAllText("../../Example/pretty_res.txt", tree.PrettyPrint());
 
-            sw.Restart();
-            tree.OptimizeExpressions(new BinaryOperationOptimizer());
-            sw.Stop();
-            File.WriteAllText("../../Example/expr_opt_pretty_res.txt", tree.PrettyPrint());
-            Console.WriteLine("Expression optimization completed. Time = {0}", sw.ElapsedMilliseconds);
+            for (int i = 0; i < 10; ++i)
+            {
+                sw.Restart();
+                tree.OptimizeExpressions(expressionOptimizer);
+                sw.Stop();
+                File.WriteAllText("../../Example/expr_opt_pretty_res.txt", tree.PrettyPrint());
+                Console.WriteLine("Expression optimization completed. Time = {0}", sw.ElapsedMilliseconds);
 
-            sw.Restart();
-            tree.OptimizeStatement(new StatementOptimizer());
-            sw.Stop();
-            File.WriteAllText("../../Example/all_opts_pretty_res.txt", tree.PrettyPrint());
-            Console.WriteLine("Statements optimization completed. Time = {0}", sw.ElapsedMilliseconds);
+                sw.Restart();
+                tree.OptimizeStatement(statementoptimizer);
+                sw.Stop();
+                File.WriteAllText("../../Example/all_opts_pretty_res.txt", tree.PrettyPrint());
+                Console.WriteLine("Statements optimization completed. Time = {0}", sw.ElapsedMilliseconds);
+            }
 
             totalStopWatch.Stop();
             Console.WriteLine("Completed all. Total time = {0} ms", totalStopWatch.ElapsedMilliseconds);

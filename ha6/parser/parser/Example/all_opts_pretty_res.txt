@@ -1,16 +1,13 @@
 read x;
 read y;
 x := 10;
-if 0 then
-	write 12
-else
-	write 24;
+write 24;
 x := 10;
 y := 0;
 p := u;
 v := 1;
 v := 1;
-z := 1;
+z := 0;
 k := d;
 while (x < 20) do
 	x := (x + 1);
