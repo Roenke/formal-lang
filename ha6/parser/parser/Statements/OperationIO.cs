@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Monad.Parsec;
 using parser.Expressions;
+using parser.Optimization;
 
 namespace parser.Statements
 {
@@ -22,9 +23,11 @@ namespace parser.Statements
             _rightExpression.Print(sb);
         }
 
-        public override void Optimize()
+        public override bool Optimize(IExpressionOptimizer optimizer)
         {
-            _rightExpression.Simplify();
+            _rightExpression.Accept(optimizer);
+            // TODO: logic
+            return false;
         }
 
         private readonly Expression _rightExpression;

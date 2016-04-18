@@ -3,12 +3,12 @@ using Monad.Parsec.Language;
 
 namespace parser.Parser
 {
-    public class Language : EmptyDef
+    public class LLanguageDefinition : EmptyDef
     {
-        public Language()
+        public LLanguageDefinition()
         {
             ReservedOpNames = new List<string> { "+", "-", "*", "/", "%", "==", "!=", ">", ">=", "<", "<=", "&&", "||", ";",};
-            ReservedNames = new List<string> { "skip", "write", "read", "while", "do", "if", "then", "else", "(", ")" , ":=" };
+            ReservedNames = new List<string> { "skip", "write", "read", "while", "do", "if", "then", "else" , ":=" };
             CaseSensitive = true;
         }
     }

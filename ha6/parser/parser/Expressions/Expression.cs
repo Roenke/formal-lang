@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
+using parser.Optimization;
 using parser.Parser;
 
 namespace parser.Expressions
@@ -12,6 +13,8 @@ namespace parser.Expressions
 
         public abstract void Print(StringBuilder sb);
 
-        public abstract void Simplify();
+        public abstract bool Accept(IExpressionOptimizer optimizer);
+
+        public Expression Optimized;
     }
 }

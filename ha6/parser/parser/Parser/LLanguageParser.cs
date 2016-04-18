@@ -12,26 +12,25 @@ namespace parser.Parser
     {
         private static Parser<Program> _program;
 
-        public LLanguageParser()
+        public LLanguageParser(LanguageDef def)
         {
-            Init();
+            Init(def);
         }
 
-        public Program[] GetTree(string programToParse)
+        public Program GetTree(string programToParse)
         {
             var result = _program.Parse(programToParse);
 
-            return result.Value.Select(x => x.Item1).ToArray();
+            return result.Value.Select(x => x.Item1).FirstOrDefault();
         }
 
-        private static void Init()
+        private static void Init(LanguageDef def)
         {
             Parser<Statement>[] termStatement = {null};
             Parser<Expression>[] exprlazy = { null };
             var expr = Prim.Lazy(() => exprlazy[0]);
             Func<Parser<Expression>, Parser<Expression>> @try = Prim.Try;
 
-            var def = new Language();
             var lexer = Tok.MakeTokenParser<Expression>(def);
             var binops = BuildOperatorsTable(lexer);
 
@@ -39,7 +38,7 @@ namespace parser.Parser
             var reserved = lexer.Reserved;
 
             var number = from n in lexer.Integer
-                      select new Number(n) as Expression;
+                      select new Number(n.Value, n.Location) as Expression;
 
              var variable = from id in lexer.Identifier
                         select new Variable(id) as Expression;

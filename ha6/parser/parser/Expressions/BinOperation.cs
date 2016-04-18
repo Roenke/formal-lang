@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using parser.Optimization;
 
 namespace parser.Expressions
 {
@@ -6,29 +7,34 @@ namespace parser.Expressions
     {
         public BinOperation(Expression left, Expression right, Operation op)
         {
-            _left = left;
-            _right = right;
-            _operation = op;
+            Left = left;
+            Right = right;
+            Operation = op;
         }
+
+        public Expression Left { get; private set; }
+
+        public Expression Right { get; private set; }
+
+        public Operation Operation { get; }
 
         public override void Print(StringBuilder sb)
         {
             sb.Append("(");
-            _left.Print(sb);
-            sb.AppendFormat(" {0} ", _operation);
-            _right.Print(sb);
+            Left.Print(sb);
+            sb.AppendFormat(" {0} ", Operation);
+            Right.Print(sb);
             sb.Append(")");
         }
 
-        public override void Simplify()
+        public override bool Accept(IExpressionOptimizer optimizer)
         {
-            // TODO: need more difficult logic
-            _left.Simplify();
-            _right.Simplify();
-        }
+            if (Left.Accept(optimizer))
+                Left = Left.Optimized;
+            if (Right.Accept(optimizer))
+                Right = Right.Optimized;
 
-        private readonly Expression _left;
-        private readonly Expression _right;
-        private readonly Operation _operation;
+            return optimizer.Visit(this);
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace parser
 
             var content = File.ReadAllText(args[0]);
 
-            var parser = new LLanguageParser();
+            var parser = new LLanguageParser(new LLanguageDefinition());
             parser.GetTree(content);
         }
 

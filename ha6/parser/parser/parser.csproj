@@ -67,16 +67,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\BinOp.cs" />
     <Compile Include="Expressions\BinOperation.cs" />
     <Compile Include="Expressions\Operation.cs" />
+    <Compile Include="Optimization\IExpressionOptimizer.cs" />
+    <Compile Include="Optimization\BinaryOperationOptimizer.cs" />
     <Compile Include="Parser\NotUniqueParseException.cs" />
     <Compile Include="Statements\SemiStatement.cs" />
     <Compile Include="Statements\AssignStatement.cs" />
-    <Compile Include="Expressions\BinaryOperation.cs" />
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Statements\IfStatement.cs" />
     <Compile Include="Expressions\Number.cs" />
-    <Compile Include="Parser\Language.cs" />
+    <Compile Include="Parser\LLanguageDefinition.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Statements\IOOperationType.cs" />
     <Compile Include="Statements\OperationIO.cs" />

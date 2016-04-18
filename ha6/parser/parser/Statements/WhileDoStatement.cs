@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Monad.Parsec;
 using parser.Expressions;
+using parser.Optimization;
 
 namespace parser.Statements
 {
@@ -17,14 +18,15 @@ namespace parser.Statements
             var tabs = new string('\t', tabCount);
             sb.Append(tabs).Append("while ");
             _condition.Print(sb);
-            sb.AppendLine().Append(tabs).AppendLine("do");
+            sb.AppendLine(" do");
             _statement.PrettyPrint(sb, tabCount + 1);
         }
 
-        public override void Optimize()
+        public override bool Optimize(IExpressionOptimizer optimizer)
         {
-            _condition.Simplify();
-            _statement.Optimize();
+            _condition.Accept(optimizer);
+            _statement.Optimize(optimizer);
+            return false;
         }
 
         private readonly Expression _condition;

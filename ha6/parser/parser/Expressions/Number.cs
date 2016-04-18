@@ -1,28 +1,28 @@
 ﻿using System.Text;
 using Monad.Parsec;
-using Monad.Parsec.Token;
-using parser.Parser;
+using parser.Optimization;
 
 namespace parser.Expressions
 {
     public class Number : Expression
     {
-        public Number(IntegerToken t, SrcLoc location = null)
+        public Number(int value, SrcLoc location)
             : base(location)
         {
-            _value = t.Value;
+            Value = value;
         }
+
+        public int Value { get; }
 
         public override void Print(StringBuilder sb)
         {
-            sb.Append(_value);
+            sb.Append(Value);
         }
 
-        public override void Simplify()
+        public override bool Accept(IExpressionOptimizer optimizer)
         {
-            throw new System.NotImplementedException();
+            return false;
         }
 
-        private readonly int _value;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
+using parser.Optimization;
 using parser.Parser;
 
 namespace parser.Statements
@@ -17,9 +18,9 @@ namespace parser.Statements
             sb.Append(tabs).Append("skip");
         }
 
-        public override void Optimize()
+        public override bool Optimize(IExpressionOptimizer optimizer)
         {
-            
+            return false;
         }
     }
 }

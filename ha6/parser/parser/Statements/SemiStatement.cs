@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Monad.Parsec;
+using parser.Optimization;
 using parser.Parser;
 
 namespace parser.Statements
@@ -20,10 +21,11 @@ namespace parser.Statements
             _right.PrettyPrint(sb, tabCount);
         }
 
-        public override void Optimize()
+        public override bool Optimize(IExpressionOptimizer optimizer)
         {
-            _left.Optimize();
-            _right.Optimize();
+            _left.Optimize(optimizer);
+            _right.Optimize(optimizer);
+            return false;
         }
 
         private readonly Statement _left;

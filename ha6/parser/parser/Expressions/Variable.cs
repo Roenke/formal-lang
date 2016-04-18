@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Monad.Parsec;
 using Monad.Parsec.Token;
+using parser.Optimization;
 
 namespace parser.Expressions
 {
@@ -12,19 +11,19 @@ namespace parser.Expressions
                 :
                 base(id.Location)
         {
-            _name = string.Join("", id.Value.Select(x => x.Value));
+            Name = string.Join("", id.Value.Select(x => x.Value));
         }
+
+        public string Name { get; }
 
         public override void Print(StringBuilder sb)
         {
-            sb.Append(_name);
+            sb.Append(Name);
         }
 
-        public override void Simplify()
+        public override bool Accept(IExpressionOptimizer optimizer)
         {
-            throw new System.NotImplementedException();
+            return false;
         }
-
-        private string _name;
     }
 }
