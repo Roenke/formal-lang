@@ -9,41 +9,14 @@ namespace Tests
     public class ParserTests
     {
         private static readonly LLanguageParser Parser = new LLanguageParser(new LLanguageDefinition());
-        [Test]
-        public void SimpleProgramTest()
-        {
-            Assert.IsNotNull(Parser.GetTree("skip"));
-            Assert.IsNull(Parser.GetTree("unknown asds"));
-            Assert.IsNotNull(Parser.GetTree("x := 1 + 1"));
-            Assert.IsNotNull(Parser.GetTree("if (1 <    3) then         x := 3 else skip"));
-            Assert.IsNotNull(Parser.GetTree("skip      ; skip"));
-            Assert.IsNotNull(Parser.GetTree("while (x < 10) do x := (x + (10 * 120))"));
-
-            var nonUnique =
-                Parser.GetTree("if (1 < 3) then x := 3 else skip; while (x < 10) do x := ((x + 10) * 120); skip");
-            Assert.IsNotNull(nonUnique);
-            Console.WriteLine(nonUnique.PrettyPrint());
-        }
-
-        [Test]
-        public void PrettyPrinterTest()
-        {
-            Console.WriteLine(Parser.GetTree("x := ((y==2)&&((p==3)||((y!=2)&&(p!=4))))").PrettyPrint()); Console.WriteLine();
-            Console.WriteLine(Parser.GetTree("skip;skip;skip").PrettyPrint()); Console.WriteLine();
-            Console.WriteLine(Parser.GetTree("x := (1 + 1); y := (2 + 3)").PrettyPrint()); Console.WriteLine();
-            Console.WriteLine(Parser
-                .GetTree("if (1 < 3) then x := (2 + 4) else while (y < 10) do while (z < y) do if (z < 3) then z := z + 1 else y := y - 1; skip;skip")
-                .PrettyPrint()); Console.WriteLine();
-            Console.WriteLine(Parser.GetTree("if (x < 10) then write x else read z").PrettyPrint());
-        }
 
         [Test]
         public void ValidNumberTest()
         {
             var tree = Parser.GetTree("write 123");
-            var write = (OperationIo) tree.Statement;
+            var write = (OperationIo)tree.Statement;
             Assert.True(write.Expression is Number);
-            Assert.AreEqual(123, ((Number) write.Expression).Value);
+            Assert.AreEqual(123, ((Number)write.Expression).Value);
         }
 
         [Test]
@@ -59,15 +32,15 @@ namespace Tests
         public void ValidBinaryArithmeticOperationTest()
         {
             var tree = Parser.GetTree("a := (((((x + y) - z) * 2) / 5) % 3)");
-            var binOp = (BinOperation) ((AssignStatement) tree.Statement).RightPart;
+            var binOp = (BinOperation)((AssignStatement)tree.Statement).RightPart;
             Assert.AreEqual(BinOp.Modulo, binOp.Operation.Op);
             Assert.AreEqual(3, ((Number)binOp.Right).Value);
 
-            var left = (BinOperation) binOp.Left;
+            var left = (BinOperation)binOp.Left;
             Assert.AreEqual(BinOp.Div, left.Operation.Op);
             Assert.AreEqual(5, ((Number)left.Right).Value);
 
-            left = (BinOperation) left.Left;
+            left = (BinOperation)left.Left;
             Assert.AreEqual(BinOp.Mul, left.Operation.Op);
             Assert.AreEqual(2, ((Number)left.Right).Value);
 
@@ -85,7 +58,7 @@ namespace Tests
         public void ValidBinaryLogicalOperationTest()
         {
             var tree = Parser.GetTree("a := ((x && y) || z)");
-            var binOp = (BinOperation) ((AssignStatement) tree.Statement).RightPart;
+            var binOp = (BinOperation)((AssignStatement)tree.Statement).RightPart;
             Assert.AreEqual(BinOp.Or, binOp.Operation.Op);
             Assert.AreEqual("z", ((Variable)binOp.Right).Name);
 
@@ -131,7 +104,7 @@ namespace Tests
         {
             var tree = Parser.GetTree("skip; skip");
             Assert.True(tree.Statement is SemiStatement);
-            var semi = (SemiStatement) tree.Statement;
+            var semi = (SemiStatement)tree.Statement;
             Assert.True(semi.FirstStatement is SkipStatement);
             Assert.True(semi.SecondStatement is SkipStatement);
         }
@@ -142,7 +115,7 @@ namespace Tests
             var tree = Parser.GetTree("if 1 then skip else read x");
 
             Assert.True(tree.Statement is IfStatement);
-            var ifStatement = (IfStatement) tree.Statement;
+            var ifStatement = (IfStatement)tree.Statement;
             Assert.True(ifStatement.Condition is Number);
             Assert.AreEqual(1, ((Number)ifStatement.Condition).Value);
             Assert.True(ifStatement.ThenStatement is SkipStatement);
@@ -155,8 +128,8 @@ namespace Tests
             var tree = Parser.GetTree("while 0 do x := x + 1");
 
             Assert.True(tree.Statement is WhileDoStatement);
-            var whileDoWtatement = (WhileDoStatement) tree.Statement;
-            Assert.AreEqual(0, ((Number) whileDoWtatement.Condition).Value);
+            var whileDoWtatement = (WhileDoStatement)tree.Statement;
+            Assert.AreEqual(0, ((Number)whileDoWtatement.Condition).Value);
             Assert.True(whileDoWtatement.LoopBody is AssignStatement);
             Assert.AreEqual("x", ((AssignStatement)whileDoWtatement.LoopBody).Var.Name);
             Assert.AreEqual(BinOp.Plus, ((BinOperation)((AssignStatement)whileDoWtatement.LoopBody).RightPart).Operation.Op);
@@ -168,12 +141,12 @@ namespace Tests
             var tree = Parser.GetTree("read x; write 10");
             Assert.True(tree.Statement is SemiStatement);
 
-            var semi = (SemiStatement) tree.Statement;
+            var semi = (SemiStatement)tree.Statement;
             Assert.True(semi.FirstStatement is OperationIo);
             Assert.True(semi.SecondStatement is OperationIo);
 
-            var read = (OperationIo) semi.FirstStatement;
-            var write = (OperationIo) semi.SecondStatement;
+            var read = (OperationIo)semi.FirstStatement;
+            var write = (OperationIo)semi.SecondStatement;
 
             Assert.AreEqual(IoOperationType.Read, read.OperationType);
             Assert.AreEqual(IoOperationType.Write, write.OperationType);
@@ -184,9 +157,32 @@ namespace Tests
         {
             var tree = Parser.GetTree("x := 123");
             Assert.True(tree.Statement is AssignStatement);
-            var assign = (AssignStatement) tree.Statement;
+            var assign = (AssignStatement)tree.Statement;
             Assert.AreEqual("x", assign.Var.Name);
-            Assert.AreEqual(123, ((Number) assign.RightPart).Value);
+            Assert.AreEqual(123, ((Number)assign.RightPart).Value);
+        }
+
+        [Test]
+        public void SimpleProgramTest()
+        {
+            Assert.IsNotNull(Parser.GetTree("skip"));
+            Assert.IsNull(Parser.GetTree("unknown asds"));
+            Assert.IsNotNull(Parser.GetTree("x := 1 + 1"));
+            Assert.IsNotNull(Parser.GetTree("if (1 <    3) then         x := 3 else skip"));
+            Assert.IsNotNull(Parser.GetTree("skip      ; skip"));
+            Assert.IsNotNull(Parser.GetTree("while (x < 10) do x := (x + (10 * 120))"));
+        }
+
+        [Test]
+        public void PrettyPrinterTest()
+        {
+            Console.WriteLine(Parser.GetTree("x := ((y==2)&&((p==3)||((y!=2)&&(p!=4))))").PrettyPrint()); Console.WriteLine();
+            Console.WriteLine(Parser.GetTree("skip;skip;skip").PrettyPrint()); Console.WriteLine();
+            Console.WriteLine(Parser.GetTree("x := (1 + 1); y := (2 + 3)").PrettyPrint()); Console.WriteLine();
+            Console.WriteLine(Parser
+                .GetTree("if (1 < 3) then x := (2 + 4) else while (y < 10) do while (z < y) do if (z < 3) then z := z + 1 else y := y - 1; skip;skip")
+                .PrettyPrint()); Console.WriteLine();
+            Console.WriteLine(Parser.GetTree("if (x < 10) then write x else read z").PrettyPrint());
         }
     }
 }
