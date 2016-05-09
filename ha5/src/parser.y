@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "parser.hpp"
 #include <fstream>
+#include <sstream>
 #include "../src/tree.hpp"
 
 extern size_t position;
@@ -47,6 +48,8 @@ void yyerror(const char* message) {
 %token <str> SEMICOLON
 %token <str> OPERATION
 %token <str> SKIP
+%token <str> ENDIF
+%token <str> ENDDO
 %token LPAREN
 %token RPAREN
 
@@ -59,7 +62,6 @@ void yyerror(const char* message) {
 %start program
 
 %%
-// TODO: Add delete for lexer buffer;
 program:
 	statement
 	{
@@ -85,34 +87,22 @@ expr_term:
 expr:
 	expr_term
 	{
-		static size_t local_num = 1;
-		$$ = new tree_node(std::string("expr_term") + std::to_string(local_num++));
-		$$->add_child($1);
+		$$ = $1;
 	}
 	|
 	LPAREN expr OPERATION expr RPAREN
 	{
-		$$ = new tree_node("(expr " + std::string($3) + " expr)");
+		$$ = new tree_node(std::string($3));
 		$$->add_child($2);
 		$$->add_child($4);
 		delete[] $3;
-	}
-	|
-	expr OPERATION expr_term
-	{
-		$$ = new tree_node("expr " + std::string($2));
-		$$->add_child($1);
-		$$->add_child($3);
-		delete[] $2;
 	}
 	;
 
 statement:
 	statement_term
 	{
-		static size_t local_num = 1;
-		$$ = new tree_node(std::string("statement") + std::to_string(local_num++));
-		$$->add_child($1);
+		$$ = $1;
 	}
 	|
 	statement SEMICOLON statement_term
@@ -133,7 +123,9 @@ statement_term:
 	|
 	VARIABLE ASSIGN expr
 	{
-		$$ = new tree_node(std::string($1) + $2);
+		$$ = new tree_node($2);
+		auto variable_node = new tree_node($1);
+		$$->add_child(variable_node);
 		$$->add_child($3);
 		delete[] $1; delete[] $2;
 	}
@@ -145,25 +137,27 @@ statement_term:
 		delete[] $1;
 	}
 	|
-	READ expr
+	READ VARIABLE
 	{
 		$$ = new tree_node(std::string($1));
-		$$->add_child($2);
+		$$->add_child(new tree_node(std::string($2)));
 		delete[] $1;
 	}
 	|
-	WHILE expr DO statement_term
+	WHILE expr DO statement ENDDO
 	{
-		$$ = new tree_node(std::string($1) + " expr " + $3 + " statement_term ");
+		$$ = new tree_node(std::string($1) + " " + $3 + " " + $5);
 		$$->add_child($2);
 		$$->add_child($4);
 		delete[] $1;
 		delete[] $3;
 	}
 	|
-	IF expr THEN statement ELSE statement_term 
+	IF expr THEN statement ELSE statement ENDIF
 	{
-		$$ = new tree_node(std::string($1) + "expr" + $3 + " statement " + $5 + " statement_term");
+		std::stringstream ss;
+		ss << $1 << " " << $3 << " " << $5 << " " << $7;
+		$$ = new tree_node(ss.str());
 		$$->add_child($2);
 		$$->add_child($4);
 		$$->add_child($6);

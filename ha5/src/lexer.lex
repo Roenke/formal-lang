@@ -23,7 +23,9 @@ std::map<std::string, yytokentype> kw_types{
 	{ "write", WRITE },
 	{ "if", IF },
 	{ "then", THEN },
-	{ "else", ELSE }
+	{ "else", ELSE },
+	{ "endif", ENDIF },
+	{ "enddo", ENDDO }
 };
 
 const char* describe_token();
@@ -34,7 +36,7 @@ void log_token(char const * token_type);
 
 %option ansi-prototypes noyywrap yy_scan_string
 
-KEY_WORD "do"|"while"|"skip"|"read"|"write"|"if"|"then"|"else"
+KEY_WORD "do"|"while"|"skip"|"read"|"write"|"if"|"then"|"else"|"enddo"|"endif"
 OPERATION \+|-|\*|\/|%|==|!=|<|<=|>|>=|&&|\|\|
 VARIABLE  [a-zA-Z][a-zA-Z0-9]*
 NUMBER    [0-9]+
