@@ -27,6 +27,21 @@ HOWTO:
 
 Сейчас в качестве примера предлагается программа
 ```
+skip; skip; read x; read y; x := 10;
+if (x < 10) then j := 10 else if (x > 12) then read x; write x else write 12 * 2; write 10 endif endif; 
+x := 10;
+y := (u * 0);p := (u + 0);v := (u || 1);v := (1 || u);z := (0 && u);k := (0 + d);
+while (x < 20) do x := (x + 1); if (x > 10) then write x else write y endif enddo;
+x := 20;
+while (x < 20) do x := (x + 1);
+if ((1 < 2) || (3 > 2)) then write x else write y endif enddo;
+skip;
+skip;
+z := (((2 + 4) * 4) + (17 - 3));
+while (0 + 9) do if (x > 20) then skip else while (x < 23) do x := y + 1; skip; enddo; skip endif enddo
+```
+Результат pretty-printer'а для неё
+```
 skip;
 skip;
 read x;
@@ -36,9 +51,13 @@ if (x < 10) then
 	j := 10
 else
 	if (x > 12) then
-		write 12
+		read x;
+		write x
 	else
 		write (12 * 2);
+		write 10
+	endif
+endif;
 x := 10;
 y := (u * 0);
 p := (u + 0);
@@ -48,32 +67,33 @@ z := (0 && u);
 k := (0 + d);
 while (x < 20) do
 	x := (x + 1);
+	if (x > 10) then
+		write x
+	else
+		write y
+	endif
+enddo;
 x := 20;
 while (x < 20) do
 	x := (x + 1);
-if ((1 < 2) || (3 > 2)) then
-	write x
-else
-	write y;
-skip;
-skip;
-z := (((2 + 4) * 4) + (17 - 3));
-while (0 + 9) do
-	if (x > 20) then
-		skip
+	if ((1 < 2) || (3 > 2)) then
+		write x
 	else
-		while (x < 23) do
-			x := (y + 1);
+		write y
+	endif
+enddo;
 skip;
-skip
+skip;
+z := (((2 + 4) * 4) + (17 - 3))
 ```
 
-Которая после оптимизаций приводится к виду:
+Результат оптимизаций:
 ```
 read x;
 read y;
 x := 10;
 write 24;
+write 10;
 x := 10;
 y := 0;
 p := u;
@@ -83,16 +103,14 @@ z := 0;
 k := d;
 while (x < 20) do
 	x := (x + 1);
-x := 20;
-write 20;
-z := 38;
-while 9 do
-	if (x > 20) then
-		skip
+	if (x > 10) then
+		write x
 	else
-		while (x < 23) do
-			x := (y + 1);
-skip
+		write y
+	endif
+enddo;
+x := 20;
+z := 38
 ```
 Заметим, что оптимизации выражений и операций зависят одна от другой, поэтому иногда нужно повторить несколько раз их выполнение. 
 Сейчас они повторяются 10 раз. Для программы из примера достаточно и двух. 

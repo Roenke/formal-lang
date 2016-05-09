@@ -31,7 +31,7 @@ clean:
 	rm -r $(BIN)*
 	rm $(TARGET)
 	rm lexer.log
-	rm tree.png
+	rm tree.pdf
 	rm tree.dot
 
 memcheck: all
@@ -39,5 +39,5 @@ memcheck: all
 
 tests: all
 	cat tests/1.test && $(TARGET) tests/1.test && \
-	dot -Tpng  -Gdpi=1500 -o tree.png tree.dot && \
-	xdg-open tree.png
+	dot -Tpdf  -Gdpi=350 -o tree.pdf tree.dot && \
+	evince tree.pdf

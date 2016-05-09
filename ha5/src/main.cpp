@@ -9,7 +9,7 @@ char const * AST_FILE_HEADER =
         "digraph AST {\n"
         "\trankdir=TB;\n"
         "size=\"6,5\"\n"
-        "node [shape = circle];\n";
+        "node [shape = box];\n";
 char const * AST_FILE_FOOTER = "}\n";
 
 void usage(const char* filename) {

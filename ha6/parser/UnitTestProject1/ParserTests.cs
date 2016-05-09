@@ -112,7 +112,7 @@ namespace Tests
         [Test]
         public void ValidIfTreeTest()
         {
-            var tree = Parser.GetTree("if 1 then skip else read x");
+            var tree = Parser.GetTree("if 1 then skip else read x endif");
 
             Assert.True(tree.Statement is IfStatement);
             var ifStatement = (IfStatement)tree.Statement;
@@ -125,7 +125,7 @@ namespace Tests
         [Test]
         public void ValidWhileTest()
         {
-            var tree = Parser.GetTree("while 0 do x := x + 1");
+            var tree = Parser.GetTree("while 0 do x := x + 1 enddo");
 
             Assert.True(tree.Statement is WhileDoStatement);
             var whileDoWtatement = (WhileDoStatement)tree.Statement;
@@ -163,14 +163,34 @@ namespace Tests
         }
 
         [Test]
+        public void ValidMultipleIfStatements()
+        {
+            var tree = Parser.GetTree("if x < 10 then x := 15; y := 10 else x:= 10; y := 15 endif");
+            Assert.True(tree.Statement is IfStatement);
+            var ifStatement = (IfStatement) tree.Statement;
+            Assert.True(ifStatement.ThenStatement is SemiStatement);
+            Assert.True(ifStatement.ElseStatement is SemiStatement);
+        }
+
+        [Test]
+        public void ValidMultipleWhileDoStatements()
+        {
+            var tree = Parser.GetTree("while x < 10 do y := (y + 1); x := (x + 1) enddo");
+            Assert.NotNull(tree);
+            Assert.True(tree.Statement is WhileDoStatement);
+            var whileStatement = (WhileDoStatement) tree.Statement;
+            Assert.True(whileStatement.LoopBody is SemiStatement);
+        }
+
+        [Test]
         public void SimpleProgramTest()
         {
             Assert.IsNotNull(Parser.GetTree("skip"));
             Assert.IsNull(Parser.GetTree("unknown asds"));
             Assert.IsNotNull(Parser.GetTree("x := 1 + 1"));
-            Assert.IsNotNull(Parser.GetTree("if (1 <    3) then         x := 3 else skip"));
+            Assert.IsNotNull(Parser.GetTree("if (1 <    3) then         x := 3 else skip endif"));
             Assert.IsNotNull(Parser.GetTree("skip      ; skip"));
-            Assert.IsNotNull(Parser.GetTree("while (x < 10) do x := (x + (10 * 120))"));
+            Assert.IsNotNull(Parser.GetTree("while (x < 10) do x := (x + (10 * 120)) enddo"));
         }
 
         [Test]
@@ -180,9 +200,9 @@ namespace Tests
             Console.WriteLine(Parser.GetTree("skip;skip;skip").PrettyPrint()); Console.WriteLine();
             Console.WriteLine(Parser.GetTree("x := (1 + 1); y := (2 + 3)").PrettyPrint()); Console.WriteLine();
             Console.WriteLine(Parser
-                .GetTree("if (1 < 3) then x := (2 + 4) else while (y < 10) do while (z < y) do if (z < 3) then z := z + 1 else y := y - 1; skip;skip")
+                .GetTree("if (1 < 3) then x := (2 + 4) else while (y < 10) do while (z < y) do if (z < 3) then z := z + 1 else y := y - 1; skip;skip endif enddo enddo endif")
                 .PrettyPrint()); Console.WriteLine();
-            Console.WriteLine(Parser.GetTree("if (x < 10) then write x else read z").PrettyPrint());
+            Console.WriteLine(Parser.GetTree("if (x < 10) then write x else read z endif").PrettyPrint());
         }
     }
 }

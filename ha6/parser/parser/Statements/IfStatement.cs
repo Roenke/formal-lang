@@ -28,6 +28,7 @@ namespace parser.Statements
             ThenStatement.PrettyPrint(sb, tabCount + 1);
             sb.AppendLine().Append(tabs).AppendLine("else");
             ElseStatement.PrettyPrint(sb, tabCount + 1);
+            sb.AppendLine().Append(tabs).Append("endif");
         }
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)
