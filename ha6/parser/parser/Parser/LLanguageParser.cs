@@ -33,7 +33,7 @@ namespace parser.Parser
 
             var lexer = Tok.MakeTokenParser<Expression>(def);
             var binops = BuildOperatorsTable(lexer);
-
+            Parser<Statement>[] statement = { null };
             var parens = lexer.Parens;
             var reserved = lexer.Reserved;
 
@@ -45,7 +45,7 @@ namespace parser.Parser
 
             var read =
                 from r in reserved("read")
-                from e in expr
+                from e in variable
                 select new OperationIo(IoOperationType.Read, e, r.Location) as Statement;
 
             var write =
@@ -66,23 +66,24 @@ namespace parser.Parser
                 from w in reserved("while")
                 from e in expr
                 from __ in reserved("do")
-                from s in termStatement[0]
+                from s in statement[0]
+                from end in reserved("enddo")
                 select new WhileDoStatement(e, s, w.Location) as Statement;
 
             var ifThenElse =
                 from i in reserved("if")
                 from c in expr
                 from then in reserved("then")
-                from st1 in termStatement[0]
+                from st1 in statement[0]
                 from else_ in reserved("else")
-                from st2 in termStatement[0]
+                from st2 in statement[0]
+                from end in reserved("endif")
                 select new IfStatement(c, st1, st2, i.Location) as Statement;
 
             termStatement[0] =
                 from s in Prim.Try(skip) | Prim.Try(assign) | Prim.Try(read) | Prim.Try(write) | Prim.Try(whileDo) | Prim.Try(ifThenElse)
                 select s;
 
-            Parser<Statement>[] statement = { null };
             var semiStatement =
                 from t in termStatement[0]
                 from _ in lexer.ReservedOp(";")

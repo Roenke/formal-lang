@@ -26,7 +26,7 @@ namespace Tests
         [Test]
         public void SimpleStatementIfOptimizerTest()
         {
-            var tree = Parser.GetTree("if 1 then read x else write (2 + 2)");
+            var tree = Parser.GetTree("if 1 then read x else write (2 + 2) endif");
             Console.WriteLine(tree.PrettyPrint()); Console.WriteLine();
             tree.OptimizeStatement(new StatementOptimizer());
             Console.WriteLine(tree.PrettyPrint());
@@ -35,7 +35,7 @@ namespace Tests
         [Test]
         public void SimpleStatementWhileOptimizerTest()
         {
-            var tree = Parser.GetTree("while ((1 + 4) == 4) do x := (x + 1);skip");
+            var tree = Parser.GetTree("while ((1 + 4) == 4) do x := (x + 1);skip enddo");
             tree.OptimizeExpressions(new BinaryOperationOptimizer());
             Console.WriteLine(tree.PrettyPrint()); Console.WriteLine();
             tree.OptimizeStatement(new StatementOptimizer());
@@ -74,12 +74,12 @@ namespace Tests
         [Test]
         public void RemoveUnusedIfTest()
         {
-            var tree = Parser.GetTree("if 0 then skip else x := 10");
+            var tree = Parser.GetTree("if 0 then skip else x := 10 endif");
             Assert.True(tree.Statement is IfStatement);
             tree.OptimizeStatement(StatementOptimizer);
             Assert.True(tree.Statement is AssignStatement);
 
-            tree = Parser.GetTree("if 1 then skip else x := 10");
+            tree = Parser.GetTree("if 1 then skip else x := 10 endif");
             Assert.True(tree.Statement is IfStatement);
             tree.OptimizeStatement(StatementOptimizer);
             Assert.True(tree.Statement is SkipStatement);
@@ -88,7 +88,7 @@ namespace Tests
         [Test]
         public void RemoveUnusedIfWithContextTest()
         {
-            var tree = Parser.GetTree("x := 12; if (x < 15) then skip else x := 10");
+            var tree = Parser.GetTree("x := 12; if (x < 15) then skip else x := 10 endif");
             Assert.True(tree.Statement is SemiStatement);
             tree.OptimizeExpressions(ExpressionOptimizer);
             tree.OptimizeStatement(StatementOptimizer);
@@ -99,7 +99,7 @@ namespace Tests
         [Test]
         public void RemoveUnusedWhileTest()
         {
-            var tree = Parser.GetTree("while 0 do x := (x + 1)");
+            var tree = Parser.GetTree("while 0 do x := (x + 1) enddo");
             tree.OptimizeStatement(StatementOptimizer);
             Assert.True(tree.Statement is SkipStatement);
         }
@@ -107,7 +107,7 @@ namespace Tests
         [Test]
         public void RemoveUnusedWhileWithContextTest()
         {
-            var tree = Parser.GetTree("x := 10; while (x > 12) do x := (x - 1)");
+            var tree = Parser.GetTree("x := 10; while (x > 12) do x := (x - 1) enddo");
             tree.OptimizeExpressions(ExpressionOptimizer);
             tree.OptimizeStatement(StatementOptimizer);
 
@@ -117,7 +117,7 @@ namespace Tests
         [Test]
         public void NoOptimizeTrueWhileConditionWithContextTest()
         {
-            var tree = Parser.GetTree("x := 10; while (x < 12) do x := (x + 1)");
+            var tree = Parser.GetTree("x := 10; while (x < 12) do x := (x + 1) enddo");
             tree.OptimizeExpressions(ExpressionOptimizer);
             tree.OptimizeStatement(StatementOptimizer);
 
@@ -127,7 +127,7 @@ namespace Tests
         [Test]
         public void CleanupContextAfterIfAssignTest()
         {
-            var tree = Parser.GetTree("x := 10; if (y < 10) then x := 34 else skip; y := (x * 2)");
+            var tree = Parser.GetTree("x := 10; if (y < 10) then x := 34 else skip endif; y := (x * 2)");
             tree.OptimizeExpressions(ExpressionOptimizer);
             var rightist = (AssignStatement)((SemiStatement)((SemiStatement)tree.Statement).SecondStatement).SecondStatement;
             Assert.False(rightist.RightPart is Number);
@@ -137,7 +137,7 @@ namespace Tests
         [Test]
         public void NoCleanupContextAfterIfAssignOtherVariableTest()
         {
-            var tree = Parser.GetTree("x := 10; if (y < 10) then z := 34 else skip; y := (x * 2)");
+            var tree = Parser.GetTree("x := 10; if (y < 10) then z := 34 else skip endif; y := (x * 2)");
             tree.OptimizeExpressions(ExpressionOptimizer);
             var rightist = (AssignStatement)((SemiStatement)((SemiStatement)tree.Statement).SecondStatement).SecondStatement;
             Assert.True(rightist.RightPart is Number);
@@ -146,7 +146,7 @@ namespace Tests
         [Test]
         public void CleanupContextAfterReadTest()
         {
-            var tree = Parser.GetTree("x := 10; read (x * t); y := (x * 2)");
+            var tree = Parser.GetTree("x := 10; read x; y := (x * 2)");
             tree.OptimizeExpressions(ExpressionOptimizer);
             var rightist = (AssignStatement)((SemiStatement)((SemiStatement)tree.Statement).SecondStatement).SecondStatement;
             Assert.False(rightist.RightPart is Number);
@@ -156,7 +156,7 @@ namespace Tests
         [Test]
         public void CleanupContexInWhileLoopBodyTest()
         {
-            var tree = Parser.GetTree("x := 10; while y < 200 do z := 2 * x; y := (x * 2)");
+            var tree = Parser.GetTree("x := 10; while y < 200 do z := 2 * x enddo; y := (x * 2)");
             tree.OptimizeExpressions(ExpressionOptimizer);
             var whileStatement = (WhileDoStatement)((SemiStatement)((SemiStatement)tree.Statement).SecondStatement).FirstStatement;
             Assert.True(whileStatement.LoopBody is AssignStatement);

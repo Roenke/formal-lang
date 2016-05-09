@@ -23,6 +23,7 @@ namespace parser.Statements
             Condition.Print(sb);
             sb.AppendLine(" do");
             LoopBody.PrettyPrint(sb, tabCount + 1);
+            sb.AppendLine().Append(tabs).Append("enddo");
         }
 
         public override bool OptimizeExpression(IExpressionOptimizer optimizer)

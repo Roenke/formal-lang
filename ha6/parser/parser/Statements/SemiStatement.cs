@@ -13,8 +13,8 @@ namespace parser.Statements
             SecondStatement = right;
         }
 
-        public Statement FirstStatement { get; set; }
-        public Statement SecondStatement { get; set; }
+        public Statement FirstStatement { get; private set; }
+        public Statement SecondStatement { get; private set; }
 
         public override void PrettyPrint(StringBuilder sb, int tabCount)
         {
