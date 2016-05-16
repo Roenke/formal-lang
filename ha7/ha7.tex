@@ -97,6 +97,65 @@
 \item Придумать грамматики типа 1 или типа 0, задающие языки из первого задания; для каждой грамматики привести 
 вывод какой-нибудь нетривиальной цепочки из языка.
 
+\begin{enumerate}
+	\item $\left\{ a^ib^jc^k   \ | \ i < j < k \right\}$
+	\begin{align*}
+		& S \to A B C\\
+		& A \to a A B C | abbCCC \\
+		& B \to b B C | \varepsilon \\
+		& C \to cC | \varepsilon \\
+		& cB \to Bc \\
+		& bB \to bb \\
+		& cC \to cc \\
+		& bC \to bc 
+	\end{align*}
+	
+	Пример вывода $aaabbbbccccc$:
+	\begin{align*}
+		S &\to ABC \to aABC \to aaABCBC \to aaabbCCCBCBC \to \to aaabbcCCBCBC \to \\
+		&\to \dots \to aaabbcccBCBC \to aaabbcccBCBC \to \dots \to aaabbBcccCBC \to \\
+		&\to aaabbbcccCBC \to aaabbbccccBC \to \dots aaabbbBccccC \to \dots \to aaabbbbccccc
+	\end{align*}
+	
+	\item $\left\{ a^nb^nc^i   \ | \ i \leq n \right\}$
+	\begin{align*}
+	& S \to \varepsilon | aSBC \\
+	& aB \to ab \\
+	& bB \to bb \\
+	& bC \to b|bc \\
+	& cC \to cc | c \\
+	& cB \to Bc
+	\end{align*}
+	
+	Пример вывода $aaabbbc$:
+	\begin{align*}
+		S &\to aSBC \to aaSBCBC \to aaaSBCBCBC \to aaaBCBCBC \to aaabCBCBC \to \\
+		&\to aaabBCBC \to aaabbCBC \to aaabbBC \to aaabbbC \to aaabbbc
+	\end{align*}
+	
+	\item $\left\{ 0^p         \ | \ p - \mathbf{prime} \right\}$
+	Существует грамматика, эквивалентная машине Тьюринга, которая умеет проверять является ли число простым.
+	
+	\item $\left\{ 0^i 1^j     \ | \ j = i^2 \right\}$
+	Существует грамматика, эквивалентная машине Тьюринга, которая умеет считать количество ноликов, а потом 
+	считать количество единичек и проверять условие $j = i^2$.
+	
+	\item $\left\{ a^n b^n c^i \ | \ n \leq i \leq 2n \right\}$
+	\begin{align*}
+		& S \to \varepsilon | aSBC \\
+		& aB \to ab \\
+		& bB \to bb \\
+		& bC \to bc|bcc \\
+		& cC \to cc | ccc \\
+		& cB \to Bc
+	\end{align*}
+	
+	Пример вывода $aabbccc$:
+	\begin{align*}
+	S &\to aSBC \to aaSBCBC \to aaBCBC \to aabCBC \to aabccBC \to \dots \to aabBccC \to aabbccc
+	\end{align*}
+\end{enumerate}
+
 \end{enumerate}
 
 \end{document}
